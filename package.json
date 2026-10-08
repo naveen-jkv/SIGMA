@@ -12,6 +12,8 @@
     "dev:analytics": "python backend/analytics/main.py",
     "dev:frontend": "npm --prefix frontend run dev",
     "frontend": "npm --prefix frontend run dev",
+    "mobile": "npm --prefix aquasense-mobile start",
+    "dev:mobile": "npm --prefix aquasense-mobile start",
     "fullstack": "concurrently -k -p \"[{name}]\" -n \"BACKEND,PYTHON,FRONTEND\" -c \"cyan,magenta,green\" \"node backend/src/server.js\" \"python backend/analytics/main.py\" \"npm --prefix frontend run dev\"",
     "seed": "node backend/seed/seedData.js",
     "test": "node backend/test/api.test.js"

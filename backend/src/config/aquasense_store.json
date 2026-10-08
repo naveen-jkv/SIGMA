@@ -991,6 +991,35 @@
       "createdBy": "system",
       "createdAt": "2026-10-08T17:58:39.011Z",
       "updatedAt": "2026-10-08T17:58:39.011Z"
+    },
+    {
+      "_id": "case_1791485598221_h8mvzo",
+      "caseId": "CASE-598200-843",
+      "age": 29,
+      "gender": "FEMALE",
+      "symptoms": [
+        "Watery Diarrhea",
+        "Vomiting",
+        "Severe Dehydration"
+      ],
+      "suspectedDisease": "Cholera",
+      "symptomDate": "2026-10-08T18:53:18.110Z",
+      "reportedDate": "2026-10-08T18:53:18.221Z",
+      "severity": "CRITICAL",
+      "district": "Central Metro",
+      "locality": "Riverbank Slum Colony",
+      "latitude": 12.9613,
+      "longitude": 77.5855,
+      "waterSource": "Flooded Riverbank Tap",
+      "waterQualityConcern": true,
+      "flooding": true,
+      "similarCasesNearby": 14,
+      "riskScore": 93,
+      "riskLevel": "CRITICAL",
+      "status": "REPORTED",
+      "createdBy": "Health Worker",
+      "createdAt": "2026-10-08T18:53:18.221Z",
+      "updatedAt": "2026-10-08T18:53:18.221Z"
     }
   ],
   "alerts": [
@@ -999,12 +1028,12 @@
       "alertId": "ALT-2026-HOT-01",
       "location": "Riverbank Slum Colony",
       "riskLevel": "CRITICAL",
-      "caseCount": 13,
-      "reason": "Epidemic surge detected: Rapid increase in suspected Cholera cases with high clinical severity following localized riverbank flooding.",
-      "recommendedAction": "URGENT: Deploy rapid epidemic response team to Riverbank Slum Colony. Initiate emergency chlorine purification distribution, set up localized Oral Rehydration Therapy (ORT) corners, and seal contaminated open wells.",
+      "caseCount": 14,
+      "reason": "Epidemic surge detected: Rapid increase in suspected Cholera cases with high clinical severity following localized riverbank flooding. | Update: Rapid increase in similar cases detected; High clinical severity (CRITICAL); High geographic case density; Recent flooding event reported; Reported water contamination concern",
+      "recommendedAction": "URGENT: Deploy rapid epidemic response team to Riverbank Slum Colony. Initiate community-wide water testing, distribute chlorine purification tablets and ORS sachets, inspect water distribution pipelines, and set up temporary oral rehydration posts.",
       "status": "ACTIVE",
       "createdAt": "2026-10-08T17:58:39.013Z",
-      "updatedAt": "2026-10-08T17:58:39.013Z"
+      "updatedAt": "2026-10-08T18:53:18.225Z"
     },
     {
       "_id": "alert_1791482319015_x549w1",
