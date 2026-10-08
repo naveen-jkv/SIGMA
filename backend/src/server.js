@@ -72,12 +72,12 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       logger.success(`========================================================`);
-      logger.success(`🚀 AQUASENSE Backend Server Running on port ${PORT}`);
-      logger.success(`📡 API URL: http://localhost:${PORT}`);
-      logger.success(`🩺 Health check: http://localhost:${PORT}/api/health`);
-      logger.success(`📊 Dashboard stats: http://localhost:${PORT}/api/dashboard/stats`);
+      logger.success(`🚀 AQUASENSE Backend Server Running on port ${PORT} (0.0.0.0)`);
+      logger.success(`📡 Local:   http://localhost:${PORT}`);
+      logger.success(`🌐 Network: http://172.16.43.161:${PORT}`);
+      logger.success(`🩺 Health:  http://172.16.43.161:${PORT}/api/health`);
       logger.success(`========================================================`);
     });
 
