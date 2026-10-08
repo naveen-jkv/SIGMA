@@ -2,18 +2,19 @@
   "name": "aquasense-backend",
   "version": "1.0.0",
   "description": "AI-Powered Water-Borne Disease Outbreak Early Warning System - Backend & Analytics",
-  "main": "src/server.js",
+  "main": "backend/src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node src/server.js",
-    "dev:all": "concurrently -k -p \"[{name}]\" -n \"NODE,PYTHON\" -c \"cyan,magenta\" \"node src/server.js\" \"python analytics/main.py\"",
-    "dev:node": "node src/server.js",
-    "dev:analytics": "python analytics/main.py",
+    "start": "node backend/src/server.js",
+    "dev": "node backend/src/server.js",
+    "dev:backend": "node backend/src/server.js",
+    "dev:all": "concurrently -k -p \"[{name}]\" -n \"NODE,PYTHON\" -c \"cyan,magenta\" \"node backend/src/server.js\" \"python backend/analytics/main.py\"",
+    "dev:node": "node backend/src/server.js",
+    "dev:analytics": "python backend/analytics/main.py",
     "dev:frontend": "npm --prefix frontend run dev",
     "frontend": "npm --prefix frontend run dev",
-    "fullstack": "concurrently -k -p \"[{name}]\" -n \"BACKEND,PYTHON,FRONTEND\" -c \"cyan,magenta,green\" \"node src/server.js\" \"python analytics/main.py\" \"npm --prefix frontend run dev\"",
-    "seed": "node seed/seedData.js",
-    "test": "node test/api.test.js"
+    "fullstack": "concurrently -k -p \"[{name}]\" -n \"BACKEND,PYTHON,FRONTEND\" -c \"cyan,magenta,green\" \"node backend/src/server.js\" \"python backend/analytics/main.py\" \"npm --prefix frontend run dev\"",
+    "seed": "node backend/seed/seedData.js",
+    "test": "node backend/test/api.test.js"
   },
   "keywords": [
     "aquasense",

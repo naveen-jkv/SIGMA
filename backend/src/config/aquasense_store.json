@@ -1,36 +1,36 @@
 {
   "users": [
     {
-      "_id": "user_1791456521765_whkh0r",
+      "_id": "user_1791482318802_r53lk9",
       "name": "Dr. Aisha Sharma",
       "email": "admin@aquasense.org",
-      "password": "$2b$10$ZQU/.M5tLB1cRN1Y8kzDguc/OQ1pxkhw7.IYlmPL.SazczyQNDSGC",
+      "password": "$2b$10$6lY4Sb9V5Hlmu2D7XhQfQ./NJRrnLben/A.DED3lGvxEPca/1TJjm",
       "role": "ADMIN",
-      "createdAt": "2026-10-08T10:48:41.765Z",
-      "updatedAt": "2026-10-08T10:48:41.765Z"
+      "createdAt": "2026-10-08T17:58:38.802Z",
+      "updatedAt": "2026-10-08T17:58:38.802Z"
     },
     {
-      "_id": "user_1791456521881_vb1idq",
+      "_id": "user_1791482318880_hrtgyb",
       "name": "Public Health Officer Rajesh",
       "email": "officer@aquasense.org",
-      "password": "$2b$10$gxZFsiwQr75/5zNh1sX21uHK.PfM203VZoVJ1nyZIdZ2Kmx.Wjml6",
+      "password": "$2b$10$k4NqAIuc.ASQlO3.S3EL1.KaiHoaEAFhK2ckU1II9V1OmqlF4yJkq",
       "role": "AUTHORITY",
-      "createdAt": "2026-10-08T10:48:41.881Z",
-      "updatedAt": "2026-10-08T10:48:41.881Z"
+      "createdAt": "2026-10-08T17:58:38.880Z",
+      "updatedAt": "2026-10-08T17:58:38.880Z"
     },
     {
-      "_id": "user_1791456521983_h19jvl",
+      "_id": "user_1791482318962_bv62zl",
       "name": "Community Health Worker Priya",
       "email": "worker@aquasense.org",
-      "password": "$2b$10$1SP3Tk/.8Ulf4Ivipi7Lt.tRttscrCe9xJvga0D0TajleEdc/WesK",
+      "password": "$2b$10$FvW4.jGcBuTMEuFyuIPZF.nTvmzZRaQCRvuVFWSudgi4Pd7IT2sDm",
       "role": "HEALTH_WORKER",
-      "createdAt": "2026-10-08T10:48:41.983Z",
-      "updatedAt": "2026-10-08T10:48:41.983Z"
+      "createdAt": "2026-10-08T17:58:38.962Z",
+      "updatedAt": "2026-10-08T17:58:38.962Z"
     }
   ],
   "cases": [
     {
-      "_id": "case_1791456521985_hls9zr",
+      "_id": "case_1791482318963_u5trzc",
       "caseId": "CASE-HOT-001",
       "age": 34,
       "gender": "FEMALE",
@@ -40,8 +40,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-08T06:48:39.093Z",
-      "reportedDate": "2026-10-08T08:48:39.094Z",
+      "symptomDate": "2026-10-08T13:58:36.176Z",
+      "reportedDate": "2026-10-08T15:58:36.177Z",
       "severity": "CRITICAL",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -55,11 +55,11 @@
       "riskLevel": "CRITICAL",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.985Z",
-      "updatedAt": "2026-10-08T10:48:41.985Z"
+      "createdAt": "2026-10-08T17:58:38.963Z",
+      "updatedAt": "2026-10-08T17:58:38.963Z"
     },
     {
-      "_id": "case_1791456521986_i2kxod",
+      "_id": "case_1791482318963_3wb40h",
       "caseId": "CASE-HOT-002",
       "age": 8,
       "gender": "MALE",
@@ -69,8 +69,8 @@
         "Lethargy"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-08T04:48:39.094Z",
-      "reportedDate": "2026-10-08T07:48:39.094Z",
+      "symptomDate": "2026-10-08T11:58:36.177Z",
+      "reportedDate": "2026-10-08T14:58:36.177Z",
       "severity": "CRITICAL",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -84,11 +84,11 @@
       "riskLevel": "CRITICAL",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.986Z",
-      "updatedAt": "2026-10-08T10:48:41.986Z"
+      "createdAt": "2026-10-08T17:58:38.963Z",
+      "updatedAt": "2026-10-08T17:58:38.963Z"
     },
     {
-      "_id": "case_1791456521987_hptp86",
+      "_id": "case_1791482318964_f5k1zh",
       "caseId": "CASE-HOT-003",
       "age": 45,
       "gender": "MALE",
@@ -98,8 +98,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-07T08:48:39.094Z",
-      "reportedDate": "2026-10-08T02:48:39.094Z",
+      "symptomDate": "2026-10-07T15:58:36.177Z",
+      "reportedDate": "2026-10-08T09:58:36.177Z",
       "severity": "CRITICAL",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -113,11 +113,11 @@
       "riskLevel": "CRITICAL",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.987Z",
-      "updatedAt": "2026-10-08T10:48:41.987Z"
+      "createdAt": "2026-10-08T17:58:38.964Z",
+      "updatedAt": "2026-10-08T17:58:38.964Z"
     },
     {
-      "_id": "case_1791456521987_oijhwf",
+      "_id": "case_1791482318965_tus3yr",
       "caseId": "CASE-HOT-004",
       "age": 22,
       "gender": "FEMALE",
@@ -127,8 +127,8 @@
         "Low Blood Pressure"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-07T05:48:39.094Z",
-      "reportedDate": "2026-10-07T09:48:39.094Z",
+      "symptomDate": "2026-10-07T12:58:36.177Z",
+      "reportedDate": "2026-10-07T16:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -142,11 +142,11 @@
       "riskLevel": "CRITICAL",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.987Z",
-      "updatedAt": "2026-10-08T10:48:41.987Z"
+      "createdAt": "2026-10-08T17:58:38.965Z",
+      "updatedAt": "2026-10-08T17:58:38.965Z"
     },
     {
-      "_id": "case_1791456521988_21l0xk",
+      "_id": "case_1791482318967_6i1c0g",
       "caseId": "CASE-HOT-005",
       "age": 62,
       "gender": "MALE",
@@ -156,8 +156,8 @@
         "Muscle Cramps"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-07T02:48:39.094Z",
-      "reportedDate": "2026-10-07T07:48:39.094Z",
+      "symptomDate": "2026-10-07T09:58:36.177Z",
+      "reportedDate": "2026-10-07T14:58:36.177Z",
       "severity": "CRITICAL",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -171,11 +171,11 @@
       "riskLevel": "CRITICAL",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.988Z",
-      "updatedAt": "2026-10-08T10:48:41.988Z"
+      "createdAt": "2026-10-08T17:58:38.967Z",
+      "updatedAt": "2026-10-08T17:58:38.967Z"
     },
     {
-      "_id": "case_1791456521989_1wf2jm",
+      "_id": "case_1791482318968_x3kndb",
       "caseId": "CASE-HOT-006",
       "age": 29,
       "gender": "FEMALE",
@@ -185,8 +185,8 @@
         "Abdominal Pain"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-06T07:48:39.094Z",
-      "reportedDate": "2026-10-06T09:48:39.094Z",
+      "symptomDate": "2026-10-06T14:58:36.177Z",
+      "reportedDate": "2026-10-06T16:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -200,11 +200,11 @@
       "riskLevel": "CRITICAL",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.989Z",
-      "updatedAt": "2026-10-08T10:48:41.989Z"
+      "createdAt": "2026-10-08T17:58:38.968Z",
+      "updatedAt": "2026-10-08T17:58:38.968Z"
     },
     {
-      "_id": "case_1791456521990_05xtvt",
+      "_id": "case_1791482318969_ybzsbq",
       "caseId": "CASE-HOT-007",
       "age": 14,
       "gender": "MALE",
@@ -214,8 +214,8 @@
         "Dehydration"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-06T04:48:39.094Z",
-      "reportedDate": "2026-10-06T08:48:39.094Z",
+      "symptomDate": "2026-10-06T11:58:36.177Z",
+      "reportedDate": "2026-10-06T15:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -229,11 +229,11 @@
       "riskLevel": "CRITICAL",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.990Z",
-      "updatedAt": "2026-10-08T10:48:41.990Z"
+      "createdAt": "2026-10-08T17:58:38.969Z",
+      "updatedAt": "2026-10-08T17:58:38.969Z"
     },
     {
-      "_id": "case_1791456521991_rctq3w",
+      "_id": "case_1791482318971_nl3ppa",
       "caseId": "CASE-HOT-008",
       "age": 40,
       "gender": "FEMALE",
@@ -242,8 +242,8 @@
         "Abdominal Cramps"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-05T06:48:39.094Z",
-      "reportedDate": "2026-10-05T09:48:39.094Z",
+      "symptomDate": "2026-10-05T13:58:36.177Z",
+      "reportedDate": "2026-10-05T16:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -257,11 +257,11 @@
       "riskLevel": "CRITICAL",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.991Z",
-      "updatedAt": "2026-10-08T10:48:41.991Z"
+      "createdAt": "2026-10-08T17:58:38.971Z",
+      "updatedAt": "2026-10-08T17:58:38.971Z"
     },
     {
-      "_id": "case_1791456521992_9b93y7",
+      "_id": "case_1791482318972_rjrc71",
       "caseId": "CASE-HOT-009",
       "age": 51,
       "gender": "MALE",
@@ -271,8 +271,8 @@
         "Weakness"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-05T02:48:39.094Z",
-      "reportedDate": "2026-10-05T08:48:39.094Z",
+      "symptomDate": "2026-10-05T09:58:36.177Z",
+      "reportedDate": "2026-10-05T15:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -286,11 +286,11 @@
       "riskLevel": "CRITICAL",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.992Z",
-      "updatedAt": "2026-10-08T10:48:41.992Z"
+      "createdAt": "2026-10-08T17:58:38.972Z",
+      "updatedAt": "2026-10-08T17:58:38.972Z"
     },
     {
-      "_id": "case_1791456521993_b7o8tm",
+      "_id": "case_1791482318973_7sfdkn",
       "caseId": "CASE-HOT-010",
       "age": 19,
       "gender": "FEMALE",
@@ -299,8 +299,8 @@
         "Nausea"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-04T08:48:39.094Z",
-      "reportedDate": "2026-10-04T09:48:39.094Z",
+      "symptomDate": "2026-10-04T15:58:36.177Z",
+      "reportedDate": "2026-10-04T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -314,11 +314,11 @@
       "riskLevel": "HIGH",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.993Z",
-      "updatedAt": "2026-10-08T10:48:41.993Z"
+      "createdAt": "2026-10-08T17:58:38.973Z",
+      "updatedAt": "2026-10-08T17:58:38.973Z"
     },
     {
-      "_id": "case_1791456521994_1xjz2j",
+      "_id": "case_1791482318974_2t7zc7",
       "caseId": "CASE-HOT-011",
       "age": 31,
       "gender": "MALE",
@@ -327,8 +327,8 @@
         "Abdominal Pain"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-03T05:48:39.094Z",
-      "reportedDate": "2026-10-03T08:48:39.094Z",
+      "symptomDate": "2026-10-03T12:58:36.177Z",
+      "reportedDate": "2026-10-03T15:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -342,11 +342,11 @@
       "riskLevel": "HIGH",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.994Z",
-      "updatedAt": "2026-10-08T10:48:41.994Z"
+      "createdAt": "2026-10-08T17:58:38.974Z",
+      "updatedAt": "2026-10-08T17:58:38.974Z"
     },
     {
-      "_id": "case_1791456521995_tgny4b",
+      "_id": "case_1791482318976_xxzhkt",
       "caseId": "CASE-HOT-012",
       "age": 26,
       "gender": "FEMALE",
@@ -355,8 +355,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-02T06:48:39.094Z",
-      "reportedDate": "2026-10-02T09:48:39.094Z",
+      "symptomDate": "2026-10-02T13:58:36.177Z",
+      "reportedDate": "2026-10-02T16:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -370,11 +370,11 @@
       "riskLevel": "HIGH",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.995Z",
-      "updatedAt": "2026-10-08T10:48:41.995Z"
+      "createdAt": "2026-10-08T17:58:38.976Z",
+      "updatedAt": "2026-10-08T17:58:38.976Z"
     },
     {
-      "_id": "case_1791456521996_zmbe0v",
+      "_id": "case_1791482318977_w5djdg",
       "caseId": "CASE-INC-001",
       "age": 38,
       "gender": "MALE",
@@ -384,8 +384,8 @@
         "Abdominal Pain"
       ],
       "suspectedDisease": "Typhoid",
-      "symptomDate": "2026-10-08T05:48:39.094Z",
-      "reportedDate": "2026-10-08T07:48:39.094Z",
+      "symptomDate": "2026-10-08T12:58:36.177Z",
+      "reportedDate": "2026-10-08T14:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -399,11 +399,11 @@
       "riskLevel": "HIGH",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.996Z",
-      "updatedAt": "2026-10-08T10:48:41.996Z"
+      "createdAt": "2026-10-08T17:58:38.977Z",
+      "updatedAt": "2026-10-08T17:58:38.977Z"
     },
     {
-      "_id": "case_1791456521997_mtucmf",
+      "_id": "case_1791482318978_0bagbl",
       "caseId": "CASE-INC-002",
       "age": 21,
       "gender": "FEMALE",
@@ -413,8 +413,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-07T06:48:39.094Z",
-      "reportedDate": "2026-10-08T03:48:39.094Z",
+      "symptomDate": "2026-10-07T13:58:36.177Z",
+      "reportedDate": "2026-10-08T10:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -428,11 +428,11 @@
       "riskLevel": "HIGH",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.997Z",
-      "updatedAt": "2026-10-08T10:48:41.997Z"
+      "createdAt": "2026-10-08T17:58:38.978Z",
+      "updatedAt": "2026-10-08T17:58:38.978Z"
     },
     {
-      "_id": "case_1791456521998_r3v76d",
+      "_id": "case_1791482318980_qsi1i9",
       "caseId": "CASE-INC-003",
       "age": 47,
       "gender": "MALE",
@@ -442,8 +442,8 @@
         "Abdominal Cramps"
       ],
       "suspectedDisease": "Dysentery",
-      "symptomDate": "2026-10-07T02:48:39.094Z",
-      "reportedDate": "2026-10-07T08:48:39.094Z",
+      "symptomDate": "2026-10-07T09:58:36.177Z",
+      "reportedDate": "2026-10-07T15:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -457,11 +457,11 @@
       "riskLevel": "HIGH",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.998Z",
-      "updatedAt": "2026-10-08T10:48:41.998Z"
+      "createdAt": "2026-10-08T17:58:38.980Z",
+      "updatedAt": "2026-10-08T17:58:38.980Z"
     },
     {
-      "_id": "case_1791456521999_atepg1",
+      "_id": "case_1791482318981_oec4wj",
       "caseId": "CASE-INC-004",
       "age": 16,
       "gender": "FEMALE",
@@ -471,8 +471,8 @@
         "Fever"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-06T05:48:39.094Z",
-      "reportedDate": "2026-10-06T09:48:39.094Z",
+      "symptomDate": "2026-10-06T12:58:36.177Z",
+      "reportedDate": "2026-10-06T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -486,11 +486,11 @@
       "riskLevel": "HIGH",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.999Z",
-      "updatedAt": "2026-10-08T10:48:41.999Z"
+      "createdAt": "2026-10-08T17:58:38.981Z",
+      "updatedAt": "2026-10-08T17:58:38.981Z"
     },
     {
-      "_id": "case_1791456521999_xvx2hj",
+      "_id": "case_1791482318982_6v5e3c",
       "caseId": "CASE-INC-005",
       "age": 55,
       "gender": "FEMALE",
@@ -500,8 +500,8 @@
         "Abdominal Pain"
       ],
       "suspectedDisease": "Typhoid",
-      "symptomDate": "2026-10-05T04:48:39.094Z",
-      "reportedDate": "2026-10-05T08:48:39.094Z",
+      "symptomDate": "2026-10-05T11:58:36.177Z",
+      "reportedDate": "2026-10-05T15:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -515,11 +515,11 @@
       "riskLevel": "HIGH",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:41.999Z",
-      "updatedAt": "2026-10-08T10:48:41.999Z"
+      "createdAt": "2026-10-08T17:58:38.982Z",
+      "updatedAt": "2026-10-08T17:58:38.982Z"
     },
     {
-      "_id": "case_1791456522000_68yhqn",
+      "_id": "case_1791482318984_huvgon",
       "caseId": "CASE-INC-006",
       "age": 11,
       "gender": "MALE",
@@ -528,8 +528,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-04T07:48:39.094Z",
-      "reportedDate": "2026-10-04T09:48:39.094Z",
+      "symptomDate": "2026-10-04T14:58:36.177Z",
+      "reportedDate": "2026-10-04T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -543,11 +543,11 @@
       "riskLevel": "HIGH",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.000Z",
-      "updatedAt": "2026-10-08T10:48:42.000Z"
+      "createdAt": "2026-10-08T17:58:38.984Z",
+      "updatedAt": "2026-10-08T17:58:38.984Z"
     },
     {
-      "_id": "case_1791456522001_o1pw51",
+      "_id": "case_1791482318986_kh8qf8",
       "caseId": "CASE-INC-007",
       "age": 33,
       "gender": "MALE",
@@ -556,8 +556,8 @@
         "Nausea"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-02T06:48:39.094Z",
-      "reportedDate": "2026-10-02T09:48:39.094Z",
+      "symptomDate": "2026-10-02T13:58:36.177Z",
+      "reportedDate": "2026-10-02T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -571,11 +571,11 @@
       "riskLevel": "MODERATE",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.001Z",
-      "updatedAt": "2026-10-08T10:48:42.001Z"
+      "createdAt": "2026-10-08T17:58:38.986Z",
+      "updatedAt": "2026-10-08T17:58:38.986Z"
     },
     {
-      "_id": "case_1791456522002_5ep3px",
+      "_id": "case_1791482318987_pugvd0",
       "caseId": "CASE-MOD-001",
       "age": 28,
       "gender": "MALE",
@@ -584,8 +584,8 @@
         "Watery Diarrhea"
       ],
       "suspectedDisease": "Dysentery",
-      "symptomDate": "2026-10-07T04:48:39.094Z",
-      "reportedDate": "2026-10-07T08:48:39.094Z",
+      "symptomDate": "2026-10-07T11:58:36.177Z",
+      "reportedDate": "2026-10-07T15:58:36.177Z",
       "severity": "MODERATE",
       "district": "South Industrial",
       "locality": "Sector 4 Industrial Colony",
@@ -599,11 +599,11 @@
       "riskLevel": "MODERATE",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.002Z",
-      "updatedAt": "2026-10-08T10:48:42.002Z"
+      "createdAt": "2026-10-08T17:58:38.987Z",
+      "updatedAt": "2026-10-08T17:58:38.987Z"
     },
     {
-      "_id": "case_1791456522003_4bjnoj",
+      "_id": "case_1791482318989_bxi6ic",
       "caseId": "CASE-MOD-002",
       "age": 32,
       "gender": "FEMALE",
@@ -613,8 +613,8 @@
         "Fever"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-06T06:48:39.094Z",
-      "reportedDate": "2026-10-06T09:48:39.094Z",
+      "symptomDate": "2026-10-06T13:58:36.177Z",
+      "reportedDate": "2026-10-06T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "South Industrial",
       "locality": "Sector 4 Industrial Colony",
@@ -628,11 +628,11 @@
       "riskLevel": "MODERATE",
       "status": "CONFIRMED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.003Z",
-      "updatedAt": "2026-10-08T10:48:42.003Z"
+      "createdAt": "2026-10-08T17:58:38.989Z",
+      "updatedAt": "2026-10-08T17:58:38.989Z"
     },
     {
-      "_id": "case_1791456522004_2fzlnc",
+      "_id": "case_1791482318990_l4n456",
       "caseId": "CASE-MOD-003",
       "age": 41,
       "gender": "MALE",
@@ -641,8 +641,8 @@
         "Vomiting"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-05T05:48:39.094Z",
-      "reportedDate": "2026-10-05T08:48:39.094Z",
+      "symptomDate": "2026-10-05T12:58:36.177Z",
+      "reportedDate": "2026-10-05T15:58:36.177Z",
       "severity": "MODERATE",
       "district": "South Industrial",
       "locality": "Sector 4 Industrial Colony",
@@ -656,11 +656,11 @@
       "riskLevel": "MODERATE",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.004Z",
-      "updatedAt": "2026-10-08T10:48:42.004Z"
+      "createdAt": "2026-10-08T17:58:38.990Z",
+      "updatedAt": "2026-10-08T17:58:38.990Z"
     },
     {
-      "_id": "case_1791456522005_aqnnfu",
+      "_id": "case_1791482318991_j5atmm",
       "caseId": "CASE-MOD-004",
       "age": 24,
       "gender": "FEMALE",
@@ -669,8 +669,8 @@
         "Headache"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-03T03:48:39.094Z",
-      "reportedDate": "2026-10-03T07:48:39.094Z",
+      "symptomDate": "2026-10-03T10:58:36.177Z",
+      "reportedDate": "2026-10-03T14:58:36.177Z",
       "severity": "LOW",
       "district": "South Industrial",
       "locality": "Sector 4 Industrial Colony",
@@ -684,11 +684,11 @@
       "riskLevel": "MODERATE",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.005Z",
-      "updatedAt": "2026-10-08T10:48:42.005Z"
+      "createdAt": "2026-10-08T17:58:38.991Z",
+      "updatedAt": "2026-10-08T17:58:38.991Z"
     },
     {
-      "_id": "case_1791456522006_9kscek",
+      "_id": "case_1791482318993_7g3yc4",
       "caseId": "CASE-MOD-005",
       "age": 50,
       "gender": "MALE",
@@ -697,8 +697,8 @@
         "Fever"
       ],
       "suspectedDisease": "Hepatitis A",
-      "symptomDate": "2026-10-01T07:48:39.094Z",
-      "reportedDate": "2026-10-01T09:48:39.094Z",
+      "symptomDate": "2026-10-01T14:58:36.177Z",
+      "reportedDate": "2026-10-01T16:58:36.177Z",
       "severity": "MODERATE",
       "district": "South Industrial",
       "locality": "Sector 4 Industrial Colony",
@@ -712,11 +712,11 @@
       "riskLevel": "MODERATE",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.006Z",
-      "updatedAt": "2026-10-08T10:48:42.006Z"
+      "createdAt": "2026-10-08T17:58:38.993Z",
+      "updatedAt": "2026-10-08T17:58:38.993Z"
     },
     {
-      "_id": "case_1791456522007_jsj2mm",
+      "_id": "case_1791482318995_zmceag",
       "caseId": "CASE-NORM-001",
       "age": 27,
       "gender": "FEMALE",
@@ -725,8 +725,8 @@
         "Headache"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-06T04:48:39.094Z",
-      "reportedDate": "2026-10-06T08:48:39.094Z",
+      "symptomDate": "2026-10-06T11:58:36.177Z",
+      "reportedDate": "2026-10-06T15:58:36.177Z",
       "severity": "LOW",
       "district": "East Suburbs",
       "locality": "Greenfield Heights",
@@ -740,11 +740,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.007Z",
-      "updatedAt": "2026-10-08T10:48:42.007Z"
+      "createdAt": "2026-10-08T17:58:38.995Z",
+      "updatedAt": "2026-10-08T17:58:38.995Z"
     },
     {
-      "_id": "case_1791456522008_zc3nb2",
+      "_id": "case_1791482318996_keuqmj",
       "caseId": "CASE-NORM-002",
       "age": 36,
       "gender": "MALE",
@@ -752,8 +752,8 @@
         "Mild Diarrhea"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-02T06:48:39.094Z",
-      "reportedDate": "2026-10-02T09:48:39.094Z",
+      "symptomDate": "2026-10-02T13:58:36.177Z",
+      "reportedDate": "2026-10-02T16:58:36.177Z",
       "severity": "LOW",
       "district": "East Suburbs",
       "locality": "Greenfield Heights",
@@ -767,11 +767,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.008Z",
-      "updatedAt": "2026-10-08T10:48:42.008Z"
+      "createdAt": "2026-10-08T17:58:38.996Z",
+      "updatedAt": "2026-10-08T17:58:38.996Z"
     },
     {
-      "_id": "case_1791456522009_1t351a",
+      "_id": "case_1791482318998_z6znwv",
       "caseId": "CASE-NORM-003",
       "age": 48,
       "gender": "FEMALE",
@@ -780,8 +780,8 @@
         "Fatigue"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-05T02:48:39.094Z",
-      "reportedDate": "2026-10-05T07:48:39.094Z",
+      "symptomDate": "2026-10-05T09:58:36.177Z",
+      "reportedDate": "2026-10-05T14:58:36.177Z",
       "severity": "LOW",
       "district": "South Cantonment",
       "locality": "Silver Oaks Cantonment",
@@ -795,11 +795,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.009Z",
-      "updatedAt": "2026-10-08T10:48:42.009Z"
+      "createdAt": "2026-10-08T17:58:38.998Z",
+      "updatedAt": "2026-10-08T17:58:38.998Z"
     },
     {
-      "_id": "case_1791456522010_dc2zol",
+      "_id": "case_1791482319000_yyqruu",
       "caseId": "CASE-NORM-004",
       "age": 18,
       "gender": "MALE",
@@ -807,8 +807,8 @@
         "Mild Nausea"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-09-30T08:48:39.094Z",
-      "reportedDate": "2026-09-30T09:48:39.094Z",
+      "symptomDate": "2026-09-30T15:58:36.177Z",
+      "reportedDate": "2026-09-30T16:58:36.177Z",
       "severity": "LOW",
       "district": "South Cantonment",
       "locality": "Silver Oaks Cantonment",
@@ -822,11 +822,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.010Z",
-      "updatedAt": "2026-10-08T10:48:42.010Z"
+      "createdAt": "2026-10-08T17:58:39.000Z",
+      "updatedAt": "2026-10-08T17:58:39.000Z"
     },
     {
-      "_id": "case_1791456522011_01kpyt",
+      "_id": "case_1791482319002_dmjoit",
       "caseId": "CASE-NORM-005",
       "age": 52,
       "gender": "MALE",
@@ -835,8 +835,8 @@
         "Fatigue"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-04T05:48:39.094Z",
-      "reportedDate": "2026-10-04T08:48:39.094Z",
+      "symptomDate": "2026-10-04T12:58:36.177Z",
+      "reportedDate": "2026-10-04T15:58:36.177Z",
       "severity": "LOW",
       "district": "West Hills",
       "locality": "Central Hill Enclave",
@@ -850,11 +850,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.011Z",
-      "updatedAt": "2026-10-08T10:48:42.011Z"
+      "createdAt": "2026-10-08T17:58:39.002Z",
+      "updatedAt": "2026-10-08T17:58:39.002Z"
     },
     {
-      "_id": "case_1791456522011_p5714u",
+      "_id": "case_1791482319003_xi0kk6",
       "caseId": "CASE-NORM-006",
       "age": 23,
       "gender": "FEMALE",
@@ -862,8 +862,8 @@
         "Abdominal Cramps"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-09-29T06:48:39.094Z",
-      "reportedDate": "2026-09-29T09:48:39.094Z",
+      "symptomDate": "2026-09-29T13:58:36.177Z",
+      "reportedDate": "2026-09-29T16:58:36.177Z",
       "severity": "LOW",
       "district": "West Hills",
       "locality": "Central Hill Enclave",
@@ -877,11 +877,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.011Z",
-      "updatedAt": "2026-10-08T10:48:42.011Z"
+      "createdAt": "2026-10-08T17:58:39.003Z",
+      "updatedAt": "2026-10-08T17:58:39.003Z"
     },
     {
-      "_id": "case_1791456522013_28uxcb",
+      "_id": "case_1791482319005_sjfih7",
       "caseId": "CASE-NORM-007",
       "age": 39,
       "gender": "FEMALE",
@@ -890,8 +890,8 @@
         "Nausea"
       ],
       "suspectedDisease": "Typhoid",
-      "symptomDate": "2026-10-03T03:48:39.094Z",
-      "reportedDate": "2026-10-03T08:48:39.094Z",
+      "symptomDate": "2026-10-03T10:58:36.177Z",
+      "reportedDate": "2026-10-03T15:58:36.177Z",
       "severity": "MODERATE",
       "district": "East Suburbs",
       "locality": "Lakeview Gardens",
@@ -905,11 +905,11 @@
       "riskLevel": "LOW",
       "status": "INVESTIGATING",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.013Z",
-      "updatedAt": "2026-10-08T10:48:42.013Z"
+      "createdAt": "2026-10-08T17:58:39.005Z",
+      "updatedAt": "2026-10-08T17:58:39.005Z"
     },
     {
-      "_id": "case_1791456522013_75fg04",
+      "_id": "case_1791482319007_d0zrfn",
       "caseId": "CASE-NORM-008",
       "age": 65,
       "gender": "MALE",
@@ -917,8 +917,8 @@
         "Mild Diarrhea"
       ],
       "suspectedDisease": "Acute Gastroenteritis",
-      "symptomDate": "2026-10-01T04:48:39.094Z",
-      "reportedDate": "2026-10-01T08:48:39.094Z",
+      "symptomDate": "2026-10-01T11:58:36.177Z",
+      "reportedDate": "2026-10-01T15:58:36.177Z",
       "severity": "LOW",
       "district": "East Suburbs",
       "locality": "Lakeview Gardens",
@@ -932,11 +932,11 @@
       "riskLevel": "LOW",
       "status": "RESOLVED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.013Z",
-      "updatedAt": "2026-10-08T10:48:42.013Z"
+      "createdAt": "2026-10-08T17:58:39.007Z",
+      "updatedAt": "2026-10-08T17:58:39.007Z"
     },
     {
-      "_id": "case_1791456522015_2m9ff7",
+      "_id": "case_1791482319009_08qrhz",
       "caseId": "CASE-EXTRA-001",
       "age": 30,
       "gender": "MALE",
@@ -946,8 +946,8 @@
         "Abdominal Cramps"
       ],
       "suspectedDisease": "Cholera",
-      "symptomDate": "2026-10-08T09:48:39.094Z",
-      "reportedDate": "2026-10-08T09:48:39.094Z",
+      "symptomDate": "2026-10-08T16:58:36.177Z",
+      "reportedDate": "2026-10-08T16:58:36.177Z",
       "severity": "CRITICAL",
       "district": "Central Metro",
       "locality": "Riverbank Slum Colony",
@@ -961,11 +961,11 @@
       "riskLevel": "CRITICAL",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.015Z",
-      "updatedAt": "2026-10-08T10:48:42.015Z"
+      "createdAt": "2026-10-08T17:58:39.009Z",
+      "updatedAt": "2026-10-08T17:58:39.009Z"
     },
     {
-      "_id": "case_1791456522016_ne5ows",
+      "_id": "case_1791482319011_m8nbok",
       "caseId": "CASE-EXTRA-002",
       "age": 12,
       "gender": "FEMALE",
@@ -974,8 +974,8 @@
         "Watery Diarrhea"
       ],
       "suspectedDisease": "Typhoid",
-      "symptomDate": "2026-10-08T08:48:39.094Z",
-      "reportedDate": "2026-10-08T09:48:39.094Z",
+      "symptomDate": "2026-10-08T15:58:36.177Z",
+      "reportedDate": "2026-10-08T16:58:36.177Z",
       "severity": "HIGH",
       "district": "Central Metro",
       "locality": "Old Market Basti",
@@ -989,13 +989,13 @@
       "riskLevel": "CRITICAL",
       "status": "REPORTED",
       "createdBy": "system",
-      "createdAt": "2026-10-08T10:48:42.016Z",
-      "updatedAt": "2026-10-08T10:48:42.016Z"
+      "createdAt": "2026-10-08T17:58:39.011Z",
+      "updatedAt": "2026-10-08T17:58:39.011Z"
     }
   ],
   "alerts": [
     {
-      "_id": "alert_1791456522017_z4ts3d",
+      "_id": "alert_1791482319013_612bfi",
       "alertId": "ALT-2026-HOT-01",
       "location": "Riverbank Slum Colony",
       "riskLevel": "CRITICAL",
@@ -1003,11 +1003,11 @@
       "reason": "Epidemic surge detected: Rapid increase in suspected Cholera cases with high clinical severity following localized riverbank flooding.",
       "recommendedAction": "URGENT: Deploy rapid epidemic response team to Riverbank Slum Colony. Initiate emergency chlorine purification distribution, set up localized Oral Rehydration Therapy (ORT) corners, and seal contaminated open wells.",
       "status": "ACTIVE",
-      "createdAt": "2026-10-08T10:48:42.017Z",
-      "updatedAt": "2026-10-08T10:48:42.017Z"
+      "createdAt": "2026-10-08T17:58:39.013Z",
+      "updatedAt": "2026-10-08T17:58:39.013Z"
     },
     {
-      "_id": "alert_1791456522018_rad22j",
+      "_id": "alert_1791482319015_x549w1",
       "alertId": "ALT-2026-INC-02",
       "location": "Old Market Basti",
       "riskLevel": "HIGH",
@@ -1015,11 +1015,11 @@
       "reason": "Accelerating cluster of acute gastrointestinal infections linked to compromised municipal distribution pipeline.",
       "recommendedAction": "HIGH PRIORITY: Issue public boil-water advisory for Old Market Basti. Dispatch municipal water engineering team to isolate and repair damaged pipeline section. Distribute halogen tablets.",
       "status": "ACTIVE",
-      "createdAt": "2026-10-08T10:48:42.018Z",
-      "updatedAt": "2026-10-08T10:48:42.018Z"
+      "createdAt": "2026-10-08T17:58:39.015Z",
+      "updatedAt": "2026-10-08T17:58:39.015Z"
     },
     {
-      "_id": "alert_1791456522020_p1leld",
+      "_id": "alert_1791482319017_a1a5su",
       "alertId": "ALT-2026-MOD-03",
       "location": "Sector 4 Industrial Colony",
       "riskLevel": "MODERATE",
@@ -1027,8 +1027,8 @@
       "reason": "Elevated case count identified among industrial worker barracks sharing private tanker water source.",
       "recommendedAction": "Inspect commercial water delivery tankers serving Sector 4. Conduct microbiological culture testing of water tanks.",
       "status": "ACKNOWLEDGED",
-      "createdAt": "2026-10-08T10:48:42.020Z",
-      "updatedAt": "2026-10-08T10:48:42.020Z"
+      "createdAt": "2026-10-08T17:58:39.017Z",
+      "updatedAt": "2026-10-08T17:58:39.017Z"
     }
   ]
 }
