@@ -8,21 +8,23 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../src/constants/theme';
 import Header from '../src/components/Header';
 import CaseCard from '../src/components/CaseCard';
-import { getCases } from '../src/services/api';
+import { getCases, syncPendingCases } from '../src/services/api';
 
-const FILTER_LEVELS = ['ALL', 'CRITICAL', 'HIGH', 'MODERATE', 'LOW'];
+const FILTER_LEVELS = ['ALL', 'CRITICAL', 'HIGH', 'MODERATE', 'LOW', 'PENDING'];
 
 export default function CasesScreen() {
   const router = useRouter();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('ALL');
 
@@ -47,12 +49,37 @@ export default function CasesScreen() {
     fetchCases();
   };
 
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await syncPendingCases();
+      Alert.alert(
+        'Surveillance Sync',
+        `Successfully synchronized ${res.synced} case(s) with authority backend.${res.failed > 0 ? ` ${res.failed} pending retry.` : ''}`
+      );
+      fetchCases();
+    } catch (err) {
+      Alert.alert('Sync Incomplete', err.message || 'Backend unreachable. Verify Wi-Fi network.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const pendingCasesCount = useMemo(() => {
+    return cases.filter((c) => c.isPendingSync).length;
+  }, [cases]);
+
   const filteredCases = useMemo(() => {
     return cases.filter((c) => {
-      // Risk Level Filter
-      if (activeFilter !== 'ALL' && (c.riskLevel || '').toUpperCase() !== activeFilter) {
+      // Risk Level / Pending Filter
+      if (activeFilter === 'PENDING') {
+        if (!c.isPendingSync && (c.riskLevel || '').toUpperCase() !== 'PENDING') {
+          return false;
+        }
+      } else if (activeFilter !== 'ALL' && (c.riskLevel || '').toUpperCase() !== activeFilter) {
         return false;
       }
+
       // Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -103,7 +130,7 @@ export default function CasesScreen() {
                 onPress={() => setActiveFilter(level)}
               >
                 <Text style={[styles.filterText, isActive && styles.filterTextActive]}>
-                  {level}
+                  {level === 'PENDING' ? `PENDING (${pendingCasesCount})` : level}
                 </Text>
               </TouchableOpacity>
             );
@@ -115,6 +142,36 @@ export default function CasesScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
       >
+        {pendingCasesCount > 0 && (
+          <View style={styles.syncCard}>
+            <View style={styles.syncCardLeft}>
+              <View style={styles.syncIconWrap}>
+                <Ionicons name="cloud-offline" size={20} color="#D97706" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.syncTitle}>
+                  {pendingCasesCount} Offline Case{pendingCasesCount > 1 ? 's' : ''} Pending Sync
+                </Text>
+                <Text style={styles.syncSub}>
+                  Recorded without network. Upload to server now.
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.syncBtn}
+              onPress={handleSync}
+              disabled={syncing}
+              activeOpacity={0.8}
+            >
+              {syncing ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.syncBtnText}>Sync All</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+
         <View style={styles.countRow}>
           <Text style={styles.countText}>
             Showing {filteredCases.length} of {cases.length} recorded cases
@@ -240,5 +297,54 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textSecondary,
     textAlign: 'center',
+  },
+  syncCard: {
+    backgroundColor: '#FFFBEB',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    padding: 14,
+    marginBottom: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  syncCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 10,
+  },
+  syncIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FEF3C7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  syncTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#92400E',
+  },
+  syncSub: {
+    fontSize: 11,
+    color: '#B45309',
+    marginTop: 2,
+  },
+  syncBtn: {
+    backgroundColor: '#D97706',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    minWidth: 78,
+    alignItems: 'center',
+  },
+  syncBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
   },
 });

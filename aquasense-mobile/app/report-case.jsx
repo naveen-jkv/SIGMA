@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS, SHADOWS } from '../src/constants/theme';
 import Header from '../src/components/Header';
-import { createCase } from '../src/services/api';
+import { createCase, savePendingCase } from '../src/services/api';
 
 const SYMPTOM_OPTIONS = [
   'Watery Diarrhea',
@@ -70,6 +70,7 @@ export default function ReportCaseScreen() {
   const [waterQualityConcern, setWaterQualityConcern] = useState(true);
   const [flooding, setFlooding] = useState(true);
   const [similarCasesNearby, setSimilarCasesNearby] = useState('12');
+  const [clinicalNotes, setClinicalNotes] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -164,6 +165,7 @@ export default function ReportCaseScreen() {
       waterQualityConcern: Boolean(waterQualityConcern),
       flooding: Boolean(flooding),
       similarCasesNearby: parseInt(similarCasesNearby, 10) || 0,
+      notes: clinicalNotes.trim(),
     };
 
     try {
@@ -176,10 +178,23 @@ export default function ReportCaseScreen() {
         },
       });
     } catch (error) {
-      setSubmitError(error.displayMessage || error.message || 'Case submission failed.');
+      const errMsg = error.displayMessage || error.message || 'Case submission failed.';
+      setSubmitError(errMsg);
       Alert.alert(
-        'Submission Failed',
-        error.displayMessage || 'Unable to register case on AQUASENSE server. Please verify network.'
+        'Server Connection Failed',
+        `${errMsg}\n\nWould you like to retry or save this case as an offline draft?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Save as Offline Draft',
+            onPress: async () => {
+              await savePendingCase(payload);
+              Alert.alert('Draft Saved', 'Case saved in local Pending Queue with PENDING status. It will be submitted once network is restored.');
+              router.replace('/cases');
+            },
+          },
+          { text: 'Retry', onPress: handleSubmitCase },
+        ]
       );
     } finally {
       setSubmitting(false);
@@ -551,6 +566,20 @@ export default function ReportCaseScreen() {
                 onChangeText={setSimilarCasesNearby}
                 keyboardType="numeric"
                 placeholder="e.g. 12"
+              />
+            </View>
+
+            {/* Field Notes (Optional) */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Field Triage Notes (Optional)</Text>
+              <TextInput
+                style={[styles.textInput, { height: 60, textAlignVertical: 'top', paddingTop: 8 }]}
+                value={clinicalNotes}
+                onChangeText={setClinicalNotes}
+                multiline
+                numberOfLines={2}
+                placeholder="Clinical observations, water color/turbidity, patient status..."
+                placeholderTextColor={COLORS.textMuted}
               />
             </View>
 

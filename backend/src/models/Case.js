@@ -108,6 +108,11 @@ const caseSchema = new mongoose.Schema(
       type: String,
       default: 'system'
     },
+    notes: {
+      type: String,
+      default: '',
+      trim: true
+    },
     createdAt: {
       type: Date,
       default: Date.now
@@ -157,6 +162,7 @@ class CaseProxy {
       riskLevel: data.riskLevel || 'LOW',
       status: data.status || 'REPORTED',
       createdBy: data.createdBy || 'system',
+      notes: data.notes || '',
       createdAt: new Date(),
       updatedAt: new Date()
     };

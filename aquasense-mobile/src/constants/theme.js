@@ -57,6 +57,13 @@ export const COLORS = {
       border: '#FECACA',
       text: '#991B1B',
     },
+    PENDING: {
+      label: 'PENDING SYNC',
+      color: '#F59E0B', // Amber 500
+      bg: '#FFFBEB',
+      border: '#FDE68A',
+      text: '#B45309',
+    },
   },
 
   // Status Indicators

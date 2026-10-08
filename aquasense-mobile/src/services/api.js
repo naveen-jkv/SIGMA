@@ -1,11 +1,13 @@
 /**
  * AQUASENSE Mobile - Centralized API Service
  * Connects React Native app to the Node.js Express backend.
+ * 
+ * Flow:
+ * Android Phone ➔ HTTP POST ➔ Express Backend ➔ Persistent DB / Mongo ➔ AI Risk Engine ➔ Auto Alert ➔ Authority Dashboard
  */
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
 
 const STORAGE_KEYS = {
   TOKEN: '@aquasense_token',
@@ -14,6 +16,7 @@ const STORAGE_KEYS = {
   CACHED_CASES: '@aquasense_cached_cases',
   CACHED_ALERTS: '@aquasense_cached_alerts',
   CACHED_STATS: '@aquasense_cached_stats',
+  PENDING_CASES: '@aquasense_pending_cases',
   DEMO_MODE: '@aquasense_demo_mode',
 };
 
@@ -25,7 +28,7 @@ let activeBaseUrl = DEFAULT_URL;
 // Create Axios Instance
 export const apiClient = axios.create({
   baseURL: DEFAULT_URL,
-  timeout: 8000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -68,7 +71,7 @@ apiClient.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-    } catch (e) {
+    } catch {
       // Ignore token read error
     }
     return config;
@@ -83,7 +86,7 @@ apiClient.interceptors.response.use(
     const isNetwork = !error.response || error.code === 'ECONNABORTED' || error.message.includes('Network Error');
     if (isNetwork) {
       error.isNetworkError = true;
-      error.displayMessage = `Unable to connect to AQUASENSE server at ${activeBaseUrl}. Verify network connection & IP.`;
+      error.displayMessage = `Unable to connect to AQUASENSE server at ${activeBaseUrl}. Verify your Wi-Fi IP and ensure backend is running.`;
     } else if (error.response?.data?.error) {
       error.displayMessage = error.response.data.error;
     } else {
@@ -98,7 +101,7 @@ apiClient.interceptors.response.use(
 // ==========================================
 export const checkHealth = async () => {
   try {
-    const res = await apiClient.get('/health', { timeout: 3500 });
+    const res = await apiClient.get('/health', { timeout: 4000 });
     return { online: true, data: res.data };
   } catch (error) {
     return { online: false, error: error.displayMessage || error.message };
@@ -106,7 +109,7 @@ export const checkHealth = async () => {
 };
 
 // ==========================================
-// 2. AUTHENTICATION
+// 2. AUTHENTICATION (Real JWT flow)
 // ==========================================
 export const login = async (email, password) => {
   try {
@@ -123,18 +126,16 @@ export const login = async (email, password) => {
 };
 
 /**
- * 1-Tap Demo Login for Hackathon Judges
- * First tries to log in with healthworker@demo.com on live backend.
- * If user does not exist, registers them on the backend so they get a real JWT!
- * If backend is unreachable, falls back to clearly labeled DEMO MODE.
+ * 1-Tap Demo Login
+ * Connects directly to real backend. If user does not exist, registers on backend.
  */
 export const demoLogin = async () => {
   const demoEmail = 'healthworker@demo.com';
   const demoPass = 'demo123';
 
+  // 1. Try logging in on live backend
   try {
-    // 1. Try logging in
-    const res = await apiClient.post('/auth/login', { email: demoEmail, password: demoPass }, { timeout: 4000 });
+    const res = await apiClient.post('/auth/login', { email: demoEmail, password: demoPass }, { timeout: 4500 });
     if (res.data?.token) {
       await AsyncStorage.setItem(STORAGE_KEYS.TOKEN, res.data.token);
       await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
@@ -142,7 +143,7 @@ export const demoLogin = async () => {
       return { ...res.data, isDemoFallback: false };
     }
   } catch (err) {
-    // 2. If user not found (401), automatically register on backend
+    // 2. If user not found (401), automatically register on backend for real JWT
     if (err.response && err.response.status === 401) {
       try {
         const regRes = await apiClient.post('/auth/register', {
@@ -157,8 +158,8 @@ export const demoLogin = async () => {
           await AsyncStorage.setItem(STORAGE_KEYS.DEMO_MODE, 'false');
           return { ...regRes.data, isDemoFallback: false };
         }
-      } catch (regErr) {
-        // If register fails, try seeded account worker@aquasense.org
+      } catch {
+        // Fallback to seeded account
         try {
           const fallbackSeed = await apiClient.post('/auth/login', {
             email: 'worker@aquasense.org',
@@ -171,16 +172,16 @@ export const demoLogin = async () => {
             return { ...fallbackSeed.data, isDemoFallback: false };
           }
         } catch {
-          // Proceed to offline demo
+          // Proceed to offline demo warning
         }
       }
     }
   }
 
-  // 3. Backend Offline: Activate Labeled DEMO MODE
+  // 3. Backend completely unreachable: Warn and activate offline demo
   const mockUser = {
     id: 'demo_worker_01',
-    name: 'Health Worker Priya (Demo)',
+    name: 'Health Worker Priya (Offline Sandbox)',
     email: demoEmail,
     role: 'HEALTH_WORKER',
     isDemo: true,
@@ -199,16 +200,10 @@ export const demoLogin = async () => {
 };
 
 export const getMe = async () => {
-  const isDemo = (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
-  if (isDemo) {
-    const raw = await AsyncStorage.getItem(STORAGE_KEYS.USER);
-    return { success: true, user: raw ? JSON.parse(raw) : null };
-  }
-
   try {
     const res = await apiClient.get('/auth/me');
     return res.data;
-  } catch (error) {
+  } catch {
     const raw = await AsyncStorage.getItem(STORAGE_KEYS.USER);
     return { success: true, user: raw ? JSON.parse(raw) : null };
   }
@@ -221,26 +216,14 @@ export const logout = async () => {
 };
 
 // ==========================================
-// 3. DASHBOARD STATS
+// 3. DASHBOARD STATS (Real backend GET)
 // ==========================================
 export const getDashboardStats = async () => {
-  const isDemo = (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
-  if (isDemo) {
-    return {
-      totalCases: 34,
-      casesToday: 5,
-      highRiskAreas: 2,
-      activeAlerts: 2,
-      isDemoData: true,
-    };
-  }
-
   try {
     const res = await apiClient.get('/dashboard/stats');
     await AsyncStorage.setItem(STORAGE_KEYS.CACHED_STATS, JSON.stringify(res.data));
     return res.data;
   } catch (error) {
-    // Return cached if available
     const cached = await AsyncStorage.getItem(STORAGE_KEYS.CACHED_STATS);
     if (cached) {
       return { ...JSON.parse(cached), isCached: true };
@@ -253,85 +236,49 @@ export const getDashboardStats = async () => {
 // 4. CASES MANAGEMENT
 // ==========================================
 export const getCases = async (params = {}) => {
-  const isDemo = (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
-  if (isDemo) {
-    return getMockCases();
-  }
-
   try {
     const res = await apiClient.get('/cases', { params });
     const data = res.data?.data || res.data || [];
     await AsyncStorage.setItem(STORAGE_KEYS.CACHED_CASES, JSON.stringify(data));
-    return data;
+    
+    // Merge pending offline cases if any
+    const pending = await getPendingCases();
+    return [...pending, ...data];
   } catch (error) {
     const cached = await AsyncStorage.getItem(STORAGE_KEYS.CACHED_CASES);
+    const pending = await getPendingCases();
     if (cached) {
-      return JSON.parse(cached);
+      return [...pending, ...JSON.parse(cached)];
+    }
+    if (pending.length > 0) {
+      return pending;
     }
     throw error;
   }
 };
 
+/**
+ * Real Case Submission: NEVER FAKES SUCCESS
+ * Sends actual HTTP POST to /cases on existing backend.
+ * Must wait for HTTP 201 before displaying success.
+ */
 export const createCase = async (caseData) => {
-  const isDemo = (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
-  if (isDemo) {
-    // Demo mode local evaluation
-    const score = caseData.severity === 'CRITICAL' ? 88 : 42;
-    const level = score >= 76 ? 'CRITICAL' : score >= 51 ? 'HIGH' : 'MODERATE';
-    const newCase = {
-      _id: `demo_${Date.now()}`,
-      caseId: `CASE-${Date.now().toString().slice(-6)}`,
-      ...caseData,
-      riskScore: score,
-      riskLevel: level,
-      createdAt: new Date().toISOString(),
-    };
-    return {
-      success: true,
-      case: newCase,
-      risk: {
-        score,
-        level,
-        reason: 'Outbreak risk evaluated locally in Demo Mode',
-        breakdown: {
-          volume_score: 16.0,
-          growth_score: 25.0,
-          clustering_score: 21.0,
-          severity_score: 18.0,
-          environmental_score: 8.0,
-        },
-      },
-      alertGenerated: level === 'CRITICAL',
-      alert: level === 'CRITICAL' ? {
-        alertId: `ALT-${Date.now().toString().slice(-6)}`,
-        location: caseData.locality,
-        riskLevel: 'CRITICAL',
-        caseCount: 9,
-        recommendedAction: `Deploy rapid intervention team to ${caseData.locality}. Distribute chlorine tablets.`,
-      } : null,
-      isDemoData: true,
-      disclaimer: 'AQUASENSE is an early warning / decision support system for public health surveillance and does not provide medical diagnoses.',
-    };
-  }
-
   try {
-    // REAL BACKEND CALL: DO NOT FAKE
     const res = await apiClient.post('/cases', caseData);
+    if (!res.data || !res.data.success) {
+      throw new Error(res.data?.error || 'Server rejected case submission');
+    }
     return res.data;
   } catch (error) {
+    // NEVER fake success if the server is offline or errors
     throw error;
   }
 };
 
 // ==========================================
-// 5. ALERTS
+// 5. ALERTS (Real backend GET)
 // ==========================================
 export const getAlerts = async () => {
-  const isDemo = (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
-  if (isDemo) {
-    return getMockAlerts();
-  }
-
   try {
     const res = await apiClient.get('/alerts');
     const data = res.data?.data || res.data || [];
@@ -347,77 +294,53 @@ export const getAlerts = async () => {
 };
 
 // ==========================================
-// 6. MOCK DATA FOR OFFLINE DEMO MODE
+// 6. SAFE OFFLINE PENDING QUEUE (No fake success)
 // ==========================================
-export const getMockCases = () => [
-  {
-    _id: 'mock_1',
-    caseId: 'CASE-HOT-001',
-    locality: 'Riverbank Slum Colony',
-    district: 'Central Metro',
-    symptoms: ['Watery Diarrhea', 'Severe Dehydration', 'Vomiting'],
-    suspectedDisease: 'Cholera',
-    severity: 'CRITICAL',
-    riskScore: 93,
-    riskLevel: 'CRITICAL',
-    symptomDate: new Date().toISOString(),
-    status: 'REPORTED',
-  },
-  {
-    _id: 'mock_2',
-    caseId: 'CASE-HOT-002',
-    locality: 'Old Market Basti',
-    district: 'Central Metro',
-    symptoms: ['Watery Diarrhea', 'Abdominal Cramps'],
-    suspectedDisease: 'Acute Gastroenteritis',
-    severity: 'HIGH',
-    riskScore: 72,
-    riskLevel: 'HIGH',
-    symptomDate: new Date(Date.now() - 86400000).toISOString(),
-    status: 'INVESTIGATING',
-  },
-  {
-    _id: 'mock_3',
-    caseId: 'CASE-NORM-003',
-    locality: 'Greenfield Heights',
-    district: 'North Zone',
-    symptoms: ['Mild Fever', 'Headache'],
-    suspectedDisease: 'Typhoid (Suspected)',
-    severity: 'LOW',
-    riskScore: 22,
-    riskLevel: 'LOW',
-    symptomDate: new Date(Date.now() - 172800000).toISOString(),
-    status: 'CONFIRMED',
-  },
-];
-
-export const getMockAlerts = () => [
-  {
-    _id: 'alt_1',
-    alertId: 'ALT-2026-HOT-01',
-    location: 'Riverbank Slum Colony',
-    riskLevel: 'CRITICAL',
-    riskScore: 93,
-    caseCount: 16,
-    reason: 'Epidemic surge detected: Rapid increase in suspected Cholera cases with high clinical severity and flooded tap contamination.',
-    recommendedAction: 'URGENT: Deploy rapid response medical team. Issue boil-water notice and distribute emergency chlorine purification tablets.',
-    status: 'ACTIVE',
+export const savePendingCase = async (caseData) => {
+  const pendingId = `PENDING-${Date.now().toString().slice(-4)}`;
+  const pendingDoc = {
+    ...caseData,
+    _id: `pending_${Date.now()}`,
+    caseId: pendingId,
+    status: 'PENDING_SYNC',
+    riskLevel: 'PENDING',
+    riskScore: null,
+    isPendingSync: true,
     createdAt: new Date().toISOString(),
-  },
-  {
-    _id: 'alt_2',
-    alertId: 'ALT-2026-WARN-02',
-    location: 'Old Market Basti',
-    riskLevel: 'HIGH',
-    riskScore: 72,
-    caseCount: 9,
-    reason: 'Elevated case cluster detected near open drain pipeline.',
-    recommendedAction: 'Inspect municipal distribution line for cross-contamination. Collect bacteriological water samples.',
-    status: 'ACTIVE',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-];
+  };
 
-export const checkIsDemoMode = async () => {
-  return (await AsyncStorage.getItem(STORAGE_KEYS.DEMO_MODE)) === 'true';
+  const current = await getPendingCases();
+  const updated = [pendingDoc, ...current];
+  await AsyncStorage.setItem(STORAGE_KEYS.PENDING_CASES, JSON.stringify(updated));
+  return pendingDoc;
+};
+
+export const getPendingCases = async () => {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.PENDING_CASES);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const syncPendingCases = async () => {
+  const pending = await getPendingCases();
+  if (pending.length === 0) return { synced: 0, failed: 0 };
+
+  const remaining = [];
+  let synced = 0;
+
+  for (const item of pending) {
+    try {
+      const { _id, caseId, isPendingSync, status, ...cleanData } = item;
+      await apiClient.post('/cases', cleanData);
+      synced++;
+    } catch {
+      remaining.push(item);
+    }
+  }
+
+  await AsyncStorage.setItem(STORAGE_KEYS.PENDING_CASES, JSON.stringify(remaining));
+  return { synced, failed: remaining.length };
 };

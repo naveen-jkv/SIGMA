@@ -52,8 +52,10 @@ export default function CaseCard({ item }) {
       )}
 
       <View style={styles.footerRow}>
-        <View style={styles.statusPill}>
-          <Text style={styles.statusText}>{item.status || 'REPORTED'}</Text>
+        <View style={[styles.statusPill, item.isPendingSync && styles.pendingPill]}>
+          <Text style={[styles.statusText, item.isPendingSync && styles.pendingText]}>
+            {item.isPendingSync ? '⏳ PENDING SYNC (OFFLINE)' : item.status || 'REPORTED'}
+          </Text>
         </View>
         <Text style={styles.dateText}>{formattedDate}</Text>
       </View>
@@ -153,6 +155,14 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: '#0369A1',
+  },
+  pendingPill: {
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  pendingText: {
+    color: '#B45309',
   },
   dateText: {
     fontSize: 11,

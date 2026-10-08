@@ -661,3 +661,146 @@ Follow this 3-minute sequence to demonstrate the power of AQUASENSE during your 
    - Point out that within milliseconds, the Python AI engine calculates a **93/100 CRITICAL risk score** and **automatically dispatches a public health alert** (`alertGenerated: true`).
 7. **Highlight Explainability & Safety**:
    - Emphasize the clear, explainable factors breakdown (`volume`, `growth`, `clustering`, `severity`, `environmental`) and the explicit medical non-diagnostic disclaimer.
+
+---
+
+## 📱 RUN AQUASENSE ON A REAL ANDROID PHONE
+
+### 1. Prerequisites
+- **Computer:** Node.js (v18+) with npm installed.
+- **Physical Android Phone:** Running Android 8.0+ connected to the **SAME Wi-Fi network** as your laptop (or connected to your phone's Wi-Fi hotspot).
+- **Tools (Optional for testing):**
+  - **Expo Go App:** Install free from Google Play Store for instant over-the-air testing.
+  - **EAS CLI:** `npm install -g eas-cli` (only if compiling a standalone APK file).
+
+---
+
+### 2. Backend & Database Setup
+1. Open PowerShell / Terminal in the project root:
+   ```powershell
+   cd backend
+   npm install
+   ```
+2. Start the backend services (Node.js API Gateway + Python FastAPI):
+   ```powershell
+   npm run dev:all
+   ```
+3. **Database:**
+   - If MongoDB is installed locally or configured in `backend/.env` (`MONGO_URI`), AQUASENSE connects automatically.
+   - If MongoDB is not installed, the system automatically activates the **Zero-Setup Persistent Datastore (`aquasense_store.json`)** so case submission and analytics work immediately without installing anything.
+4. Verify backend is active on your network:
+   - Check the console output: `🚀 AQUASENSE Backend Server Running on port 5000 (0.0.0.0)`
+   - Note the network IP shown in the console (e.g., `http://172.16.43.161:5000`).
+
+---
+
+### 3. Finding Your Laptop IPv4 Address
+On Windows (PowerShell or Command Prompt):
+```powershell
+ipconfig
+```
+Look for **IPv4 Address** under your active **Wireless LAN adapter Wi-Fi** (e.g., `192.168.1.100` or `172.16.43.161`).
+
+> **CRITICAL RULE:** Do NOT use `http://localhost:5000` inside your phone app! On a physical Android phone, `localhost` means the phone itself. You MUST use your laptop's Wi-Fi IPv4 address.
+
+---
+
+### 4. Configuring `EXPO_PUBLIC_API_URL`
+Create or edit `aquasense-mobile/.env`:
+```env
+EXPO_PUBLIC_API_URL=http://YOUR_LAPTOP_IP:5000/api
+```
+*Example:*
+```env
+EXPO_PUBLIC_API_URL=http://172.16.43.161:5000/api
+```
+*(For production or cloud deployments, replace with: `EXPO_PUBLIC_API_URL=https://your-domain.com/api`)*
+
+> **⚡ In-App Dynamic Configurator:** If your laptop IP changes, you don't even need to rebuild the app! Open the AQUASENSE mobile app, tap the **"Configure Server IP"** gear icon on the Login screen, enter your laptop's current IP (e.g. `http://172.16.43.161:5000/api`), and tap **Save & Connect**.
+
+---
+
+### 5. Running the Mobile App in Development (Expo Go)
+1. In a new terminal window:
+   ```powershell
+   cd aquasense-mobile
+   npm install
+   npx expo start
+   ```
+2. A QR code will appear in your terminal.
+3. Open the **Expo Go** app on your physical Android phone.
+4. Scan the QR code with your phone camera or Expo Go. The AQUASENSE app will compile and launch on your phone!
+
+---
+
+### 6. Building the Standalone Android APK (`eas.json`)
+The project includes a pre-configured `eas.json` for building an installable `.apk` file:
+
+1. Install EAS CLI:
+   ```powershell
+   npm install -g eas-cli
+   ```
+2. Log into Expo (create a free account at expo.dev):
+   ```powershell
+   npx eas-cli login
+   ```
+3. Trigger the standalone APK build:
+   ```powershell
+   cd aquasense-mobile
+   npx eas-cli build -p android --profile preview
+   ```
+4. Expo builds the APK in the cloud and provides a direct download link / QR code.
+5. Download the `.apk` on your phone, allow "Install from unknown sources" in Android settings, and install AQUASENSE!
+
+---
+
+### 7. End-to-End Live Hackathon Demonstration Flow
+Demonstrate the complete live loop between your phone and your laptop:
+
+1. **Laptop:** Open the Authority Dashboard in your browser:
+   ```text
+   http://localhost:3000   (or http://YOUR_LAPTOP_IP:3000)
+   ```
+   Note the initial **Total Cases** count and map view.
+2. **Phone:** Open the AQUASENSE mobile app.
+3. **Login:** Tap **`1-TAP DEMO LOGIN`** (uses real JWT authentication with backend).
+4. **Report Case:**
+   - Tap **`+ REPORT NEW CASE`**.
+   - Fill in patient age and gender.
+   - Select symptoms: `Watery Diarrhea`, `Severe Dehydration`, `Vomiting`.
+   - Select severity: `Severe / Critical`.
+   - Tap **`USE MY CURRENT LOCATION`** (grants GPS access, locks actual coordinates).
+   - Select water source (e.g., `Flooded Riverbank Tap`) and environmental observations.
+5. **Submit Case:**
+   - Tap **`SUBMIT CASE FOR RISK EVALUATION`**.
+   - Mobile sends live `POST /api/cases` with JWT header.
+   - Backend persists the case in database.
+   - AI risk engine calculates real risk score.
+   - Backend auto-creates a critical outbreak alert.
+6. **Phone Result:**
+   - Phone displays real **Risk Score (e.g., 93 - CRITICAL)**.
+   - Shows explainable factor attribution breakdown and official non-diagnostic disclaimer.
+7. **Verify Phone Case History:**
+   - Open **`My Cases`** on the phone to see the newly submitted case listed with live case ID.
+8. **Verify Laptop Dashboard Sync:**
+   - Switch back to the laptop Authority Dashboard (`http://localhost:3000`).
+   - Refresh or view dashboard:
+     - Total Cases count increases by 1.
+     - The newly submitted case appears at the top of recent cases.
+     - The case GPS location appears as a map pin.
+     - Active Outbreak Alerts count updates with the newly triggered alert!
+
+---
+
+### 8. Troubleshooting Network & Connection Issues
+
+| Issue | Cause | Solution |
+|---|---|---|
+| **"Unable to connect to AQUASENSE server"** | Phone cannot reach laptop IP | 1. Ensure phone & laptop are on the **SAME Wi-Fi**.<br>2. Check laptop IP via `ipconfig` (IPv4).<br>3. Tap "Configure Server IP" on mobile login screen and type `http://<IP>:5000/api`. |
+| **"Network Error / ECONNREFUSED"** | Using `localhost` on physical phone | Never use `localhost` on Android phone. Use laptop's Wi-Fi IPv4 address (e.g., `172.16.43.161:5000`). |
+| **Connection Times Out** | Windows Firewall blocking port 5000 | Run PowerShell as Admin:<br>`New-NetFirewallRule -DisplayName "AQUASENSE Port 5000" -Direction Inbound -LocalPort 5000 -Protocol TCP -Action Allow` |
+| **Backend Not Running** | Backend process terminated | Run `cd backend; npm run dev:all` and verify `Server Running on port 5000 (0.0.0.0)` appears. |
+| **"Session Expired / Unauthorized"** | JWT token expired or cleared | Log out and log back in, or tap "1-Tap Demo Login" to obtain a fresh token. |
+| **Offline Mode Triggered** | No Wi-Fi or airplane mode active | Cases entered offline are safely stored as `PENDING SYNC` without faking submission. Once reconnected, open "My Cases" and tap **"Sync All"**. |
+| **MongoDB Connection Refused** | Local mongod service not running | The backend automatically activates the built-in persistent datastore `aquasense_store.json`. No manual action needed. |
+
