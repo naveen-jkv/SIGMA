@@ -8,6 +8,7 @@
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
 const STORAGE_KEYS = {
   TOKEN: '@aquasense_token',
@@ -20,8 +21,19 @@ const STORAGE_KEYS = {
   DEMO_MODE: '@aquasense_demo_mode',
 };
 
-// Default Fallback IP
-const DEFAULT_URL = process.env.EXPO_PUBLIC_API_URL || 'http://172.16.43.161:5000/api';
+// Auto-detect the host machine IP from the Expo connection
+const getAutoDetectedUrl = () => {
+  const hostUri = Constants.expoConfig?.hostUri || Constants.manifest2?.extra?.expoGo?.debuggerHost;
+  if (hostUri) {
+    const host = hostUri.split(':')[0];
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      return `http://${host}:5000/api`;
+    }
+  }
+  return process.env.EXPO_PUBLIC_API_URL || 'http://172.17.77.89:5000/api';
+};
+
+const DEFAULT_URL = getAutoDetectedUrl();
 
 let activeBaseUrl = DEFAULT_URL;
 
@@ -33,6 +45,7 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
 
 // Load saved custom URL on startup
 export const initializeApiUrl = async () => {
@@ -131,7 +144,7 @@ export const login = async (email, password) => {
  */
 export const demoLogin = async () => {
   const demoEmail = 'healthworker@demo.com';
-  const demoPass = 'demo123';
+  const demoPass = 'password123';
 
   // 1. Try logging in on live backend
   try {
@@ -330,17 +343,30 @@ export const syncPendingCases = async () => {
 
   const remaining = [];
   let synced = 0;
+  let lastError = null;
 
   for (const item of pending) {
     try {
-      const { _id, caseId, isPendingSync, status, ...cleanData } = item;
-      await apiClient.post('/cases', cleanData);
-      synced++;
-    } catch {
+      const { _id, caseId, isPendingSync, status, riskLevel, riskScore, ...cleanData } = item;
+      const res = await apiClient.post('/cases', {
+        ...cleanData,
+        age: Number(cleanData.age) || 28,
+        latitude: parseFloat(cleanData.latitude) || 12.9613,
+        longitude: parseFloat(cleanData.longitude) || 77.5855,
+      });
+      if (res.data?.success) {
+        synced++;
+      } else {
+        remaining.push(item);
+      }
+    } catch (err) {
+      lastError = err?.response?.data?.error || err?.message || 'Network error';
+      console.warn('Sync case failed:', lastError);
       remaining.push(item);
     }
   }
 
   await AsyncStorage.setItem(STORAGE_KEYS.PENDING_CASES, JSON.stringify(remaining));
-  return { synced, failed: remaining.length };
+  return { synced, failed: remaining.length, error: lastError };
 };
+

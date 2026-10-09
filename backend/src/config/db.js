@@ -20,6 +20,41 @@ let fallbackStore = {
   alerts: []
 };
 
+// Ensure pre-configured demo users are always available for testing and evaluation
+const ensureDemoUsers = () => {
+  if (!fallbackStore.users) fallbackStore.users = [];
+  const demoAccounts = [
+    {
+      _id: 'user_demo_healthworker',
+      name: 'Primary Health Worker Demo',
+      email: 'healthworker@demo.com',
+      password: '$2b$10$7D8bKUYIzF.8.PomQ0O9S.pcxQVQYXonmk683Q5WPKRhwQpQjUHwq', // password123
+      role: 'HEALTH_WORKER',
+      createdAt: '2026-10-09T00:00:00.000Z',
+      updatedAt: '2026-10-09T00:00:00.000Z'
+    },
+    {
+      _id: 'user_demo_authority',
+      name: 'District Health Authority Demo',
+      email: 'authority@demo.com',
+      password: '$2b$10$7D8bKUYIzF.8.PomQ0O9S.pcxQVQYXonmk683Q5WPKRhwQpQjUHwq', // password123
+      role: 'HEALTH_AUTHORITY',
+      createdAt: '2026-10-09T00:00:00.000Z',
+      updatedAt: '2026-10-09T00:00:00.000Z'
+    }
+  ];
+
+  for (const account of demoAccounts) {
+    const existing = fallbackStore.users.find(u => u.email.toLowerCase() === account.email.toLowerCase());
+    if (!existing) {
+      fallbackStore.users.unshift(account);
+    } else {
+      existing.role = account.role;
+      existing.password = account.password;
+    }
+  }
+};
+
 // Load saved datastore from disk if exists
 const loadStoreFromFile = () => {
   try {
@@ -30,6 +65,7 @@ const loadStoreFromFile = () => {
   } catch (e) {
     logger.warn(`Could not read fallback store file: ${e.message}`);
   }
+  ensureDemoUsers();
 };
 
 // Save datastore to disk for persistence across server restarts

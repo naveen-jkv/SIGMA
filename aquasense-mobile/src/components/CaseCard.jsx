@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS, SHADOWS } from '../constants/theme';
 import RiskBadge from './RiskBadge';
 
 export default function CaseCard({ item }) {
+  const [expanded, setExpanded] = useState(false);
+
   const dateStr = item.symptomDate || item.reportedDate || item.createdAt;
   const formattedDate = dateStr ? new Date(dateStr).toLocaleDateString(undefined, {
     month: 'short',
@@ -14,49 +15,126 @@ export default function CaseCard({ item }) {
 
   return (
     <View style={styles.card}>
+      {/* Header: Case ID + Risk Badge */}
       <View style={styles.headerRow}>
         <View style={styles.idGroup}>
-          <Ionicons name="document-text-outline" size={16} color={COLORS.primary} />
+          <Text style={styles.emojiIcon}>📋</Text>
           <Text style={styles.caseId}>{item.caseId || 'CASE-REG'}</Text>
         </View>
         <RiskBadge level={item.riskLevel} score={item.riskScore} size="sm" />
       </View>
 
+      {/* Patient Demographics & Disease */}
+      <View style={styles.demographicsRow}>
+        <View style={styles.demoBadge}>
+          <Text style={styles.tinyEmoji}>👤</Text>
+          <Text style={styles.demoText}>
+            {item.age ? `${item.age} yrs` : 'Age N/A'} • {item.gender || 'Unknown'}
+          </Text>
+        </View>
+        {item.suspectedDisease ? (
+          <View style={styles.diseaseBadge}>
+            <Text style={styles.tinyEmoji}>🩺</Text>
+            <Text style={styles.diseaseText}>{item.suspectedDisease}</Text>
+          </View>
+        ) : null}
+      </View>
+
+      {/* Location */}
       <View style={styles.locationRow}>
-        <Ionicons name="location-outline" size={14} color={COLORS.textSecondary} />
+        <Text style={styles.tinyEmoji}>📍</Text>
         <Text style={styles.locationText} numberOfLines={1}>
           {item.locality || 'Unknown Locality'}{item.district ? `, ${item.district}` : ''}
         </Text>
       </View>
 
-      {item.suspectedDisease ? (
-        <View style={styles.diseaseRow}>
-          <Ionicons name="medkit-outline" size={14} color={COLORS.teal} />
-          <Text style={styles.diseaseText}>{item.suspectedDisease}</Text>
+      {/* Primary Water Source */}
+      {item.waterSource ? (
+        <View style={styles.waterRow}>
+          <Text style={styles.tinyEmoji}>💧</Text>
+          <Text style={styles.waterText} numberOfLines={1}>
+            Source: <Text style={styles.waterHighlight}>{item.waterSource}</Text>
+          </Text>
         </View>
       ) : null}
 
+      {/* Symptoms Pills */}
       {item.symptoms && item.symptoms.length > 0 && (
         <View style={styles.symptomsWrap}>
-          {item.symptoms.slice(0, 3).map((sym, idx) => (
+          {(expanded ? item.symptoms : item.symptoms.slice(0, 3)).map((sym, idx) => (
             <View key={idx} style={styles.symptomPill}>
               <Text style={styles.symptomText}>{sym}</Text>
             </View>
           ))}
-          {item.symptoms.length > 3 && (
-            <View style={[styles.symptomPill, styles.morePill]}>
-              <Text style={styles.moreText}>+{item.symptoms.length - 3}</Text>
-            </View>
+          {!expanded && item.symptoms.length > 3 && (
+            <TouchableOpacity onPress={() => setExpanded(true)} style={[styles.symptomPill, styles.morePill]}>
+              <Text style={styles.moreText}>+{item.symptoms.length - 3} more</Text>
+            </TouchableOpacity>
           )}
         </View>
       )}
 
+      {/* Expanded Clinical & Environmental Inputs (No raw coordinates) */}
+      {expanded && (
+        <View style={styles.expandedSection}>
+          <View style={styles.expandedDivider} />
+
+          <Text style={styles.expandedTitle}>REPORTED CLINICAL & FIELD INPUTS</Text>
+
+          <View style={styles.detailGrid}>
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Clinical Severity:</Text>
+              <Text style={styles.detailValBold}>{item.severity || 'MODERATE'}</Text>
+            </View>
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Cluster Cases Nearby:</Text>
+              <Text style={styles.detailValBold}>
+                {item.similarCasesNearby !== undefined ? `${item.similarCasesNearby} cases` : '0 cases'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.detailGrid}>
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Water Contamination:</Text>
+              <Text style={[styles.detailValBold, item.waterQualityConcern ? styles.hazardText : styles.safeText]}>
+                {item.waterQualityConcern ? '⚠️ Yes (Reported)' : '✓ Normal'}
+              </Text>
+            </View>
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Recent Flooding:</Text>
+              <Text style={[styles.detailValBold, item.flooding ? styles.hazardText : styles.safeText]}>
+                {item.flooding ? '🌊 Yes (Flooded)' : '✓ No'}
+              </Text>
+            </View>
+          </View>
+
+          {item.notes ? (
+            <View style={styles.detailFull}>
+              <Text style={styles.detailLabel}>Field Notes & Triage:</Text>
+              <Text style={styles.detailNotes}>"{item.notes}"</Text>
+            </View>
+          ) : null}
+        </View>
+      )}
+
+      {/* Footer Row: Status Pill, Expand Toggle, Date */}
       <View style={styles.footerRow}>
         <View style={[styles.statusPill, item.isPendingSync && styles.pendingPill]}>
           <Text style={[styles.statusText, item.isPendingSync && styles.pendingText]}>
             {item.isPendingSync ? '⏳ PENDING SYNC (OFFLINE)' : item.status || 'REPORTED'}
           </Text>
         </View>
+
+        <TouchableOpacity
+          style={styles.expandToggle}
+          onPress={() => setExpanded(!expanded)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.expandText}>{expanded ? 'Hide Details' : 'View Inputs'}</Text>
+          <Text style={styles.chevronSymbol}>{expanded ? '▲' : '▼'}</Text>
+        </TouchableOpacity>
+
         <Text style={styles.dateText}>{formattedDate}</Text>
       </View>
     </View>
@@ -84,16 +162,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
+  emojiIcon: {
+    fontSize: 14,
+  },
+  tinyEmoji: {
+    fontSize: 12,
+  },
   caseId: {
     fontSize: 13,
     fontWeight: '700',
     color: COLORS.navy,
   },
+  demographicsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 7,
+  },
+  demoBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#EFF6FF',
+    paddingVertical: 2,
+    paddingHorizontal: 7,
+    borderRadius: 6,
+  },
+  demoText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  diseaseBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F0FDFA',
+    paddingVertical: 2,
+    paddingHorizontal: 7,
+    borderRadius: 6,
+  },
+  diseaseText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.teal,
+  },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginBottom: 6,
+    marginBottom: 5,
   },
   locationText: {
     fontSize: 13,
@@ -101,15 +219,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     flex: 1,
   },
-  diseaseRow: {
+  waterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     marginBottom: 8,
   },
-  diseaseText: {
+  waterText: {
     fontSize: 12,
-    color: COLORS.teal,
+    color: COLORS.textSecondary,
+  },
+  waterHighlight: {
+    color: '#0369A1',
     fontWeight: '600',
   },
   symptomsWrap: {
@@ -137,6 +258,59 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontWeight: '600',
   },
+  expandedSection: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  expandedDivider: {
+    height: 1,
+    backgroundColor: '#E2E8F0',
+    marginBottom: 8,
+  },
+  expandedTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: COLORS.textMuted,
+    letterSpacing: 0.8,
+    marginBottom: 8,
+  },
+  detailGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  detailItem: {
+    flex: 1,
+  },
+  detailFull: {
+    marginTop: 4,
+  },
+  detailLabel: {
+    fontSize: 10,
+    color: COLORS.textMuted,
+    marginBottom: 1,
+  },
+  detailValBold: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+  },
+  detailNotes: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: COLORS.textSecondary,
+    marginTop: 1,
+  },
+  hazardText: {
+    color: '#DC2626',
+  },
+  safeText: {
+    color: '#059669',
+  },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -163,6 +337,22 @@ const styles = StyleSheet.create({
   },
   pendingText: {
     color: '#B45309',
+  },
+  expandToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+  },
+  expandText: {
+    fontSize: 11,
+    color: COLORS.primary,
+    fontWeight: '700',
+  },
+  chevronSymbol: {
+    fontSize: 9,
+    color: COLORS.primary,
   },
   dateText: {
     fontSize: 11,

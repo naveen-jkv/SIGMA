@@ -59,12 +59,17 @@ export default function ReportCaseScreen() {
   const [severity, setSeverity] = useState('CRITICAL');
   const [symptomDate] = useState(new Date().toISOString());
 
-  const [district, setDistrict] = useState('Central Metro');
-  const [locality, setLocality] = useState('Riverbank Slum Colony');
-  const [latitude, setLatitude] = useState('12.9613');
-  const [longitude, setLongitude] = useState('77.5855');
-  const [locationCaptured, setLocationCaptured] = useState(true);
+  const [district, setDistrict] = useState('');
+  const [locality, setLocality] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [locationCaptured, setLocationCaptured] = useState(false);
   const [capturingLocation, setCapturingLocation] = useState(false);
+
+  // Auto-detect live GPS location on component mount
+  React.useEffect(() => {
+    handleCaptureLocation(false);
+  }, []);
 
   const [waterSource, setWaterSource] = useState('Flooded Riverbank Tap');
   const [waterQualityConcern, setWaterQualityConcern] = useState(true);
@@ -95,32 +100,63 @@ export default function ReportCaseScreen() {
     }
   };
 
-  // Location Capture with Expo Location
-  const handleCaptureLocation = async () => {
+  // Live GPS Location Capture & Reverse Geocoding
+  const handleCaptureLocation = async (showAlert = true) => {
     setCapturingLocation(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          'Location Permission',
-          'GPS permission was denied. You may manually enter district and locality or use default coordinates.'
-        );
+        if (showAlert) {
+          Alert.alert(
+            'GPS Permission Required',
+            'Please grant location permissions to detect your live district and locality.'
+          );
+        }
         setCapturingLocation(false);
         return;
       }
 
+      // Get high-accuracy live GPS coordinates
       const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
+        accuracy: Location.Accuracy.High,
       });
 
-      setLatitude(loc.coords.latitude.toFixed(4));
-      setLongitude(loc.coords.longitude.toFixed(4));
+      const lat = loc.coords.latitude;
+      const lng = loc.coords.longitude;
+      setLatitude(lat.toFixed(6));
+      setLongitude(lng.toFixed(6));
+
+      // Reverse geocode live GPS to physical District and Locality
+      try {
+        const reverse = await Location.reverseGeocodeAsync({
+          latitude: lat,
+          longitude: lng,
+        });
+
+        if (reverse && reverse.length > 0) {
+          const place = reverse[0];
+          const detectedDistrict = place.subregion || place.district || place.city || place.region || 'Local District';
+          const areaParts = [place.name, place.street, place.sublocality, place.district].filter(Boolean);
+          const uniqueArea = Array.from(new Set(areaParts)).join(', ') || place.city || 'Live Location';
+
+          setDistrict(detectedDistrict);
+          setLocality(uniqueArea);
+        }
+      } catch (geoErr) {
+        console.warn('Reverse geocoding error:', geoErr);
+      }
+
       setLocationCaptured(true);
+      if (showAlert) {
+        Alert.alert('Live GPS Captured', 'District and Locality have been populated from your current device location.');
+      }
     } catch (err) {
-      console.warn('GPS location error, keeping default coordinates:', err);
-      // Fallback coordinates for demo
-      setLatitude('12.9613');
-      setLongitude('77.5855');
+      console.warn('GPS location error:', err);
+      // Fallback coordinates if device GPS fails
+      if (!latitude) setLatitude('12.9613');
+      if (!longitude) setLongitude('77.5855');
+      if (!district) setDistrict('Metro District');
+      if (!locality) setLocality('Field Ward');
       setLocationCaptured(true);
     } finally {
       setCapturingLocation(false);
@@ -275,11 +311,9 @@ export default function ReportCaseScreen() {
                     style={[styles.genderBtn, gender === g && styles.genderBtnActive]}
                     onPress={() => setGender(g)}
                   >
-                    <Ionicons
-                      name={g === 'FEMALE' ? 'female' : g === 'MALE' ? 'male' : 'transgender'}
-                      size={18}
-                      color={gender === g ? '#FFFFFF' : COLORS.textSecondary}
-                    />
+                    <Text style={{ fontSize: 16, marginRight: 4 }}>
+                      {g === 'FEMALE' ? '👩' : g === 'MALE' ? '👨' : '🧑'}
+                    </Text>
                     <Text style={[styles.genderText, gender === g && styles.genderTextActive]}>
                       {g}
                     </Text>
@@ -317,11 +351,19 @@ export default function ReportCaseScreen() {
                     onPress={() => toggleSymptom(sym)}
                     activeOpacity={0.7}
                   >
-                    <Ionicons
-                      name={isSelected ? 'checkbox' : 'square-outline'}
-                      size={22}
-                      color={isSelected ? COLORS.primary : COLORS.textMuted}
-                    />
+                    <View style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 4,
+                      borderWidth: 2,
+                      borderColor: isSelected ? COLORS.primary : COLORS.textMuted,
+                      backgroundColor: isSelected ? COLORS.primary : 'transparent',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 8
+                    }}>
+                      {isSelected && <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '900', lineHeight: 14 }}>✓</Text>}
+                    </View>
                     <Text style={[styles.checkboxLabel, isSelected && styles.checkboxLabelActive]}>
                       {sym}
                     </Text>
@@ -394,7 +436,7 @@ export default function ReportCaseScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Date of Symptom Onset</Text>
               <View style={styles.dateDisplay}>
-                <Ionicons name="calendar-outline" size={18} color={COLORS.primary} />
+                <Text style={{ fontSize: 16, marginRight: 6 }}>📅</Text>
                 <Text style={styles.dateDisplayText}>Today ({new Date().toLocaleDateString()})</Text>
               </View>
             </View>
@@ -422,28 +464,38 @@ export default function ReportCaseScreen() {
               <Text style={styles.stepTitle}>Geographic Tagging</Text>
             </View>
 
-            {/* GPS Capture Button */}
+            {/* Live GPS Capture Button */}
             <TouchableOpacity
-              style={styles.gpsBtn}
-              onPress={handleCaptureLocation}
+              style={[styles.gpsBtn, capturingLocation && { opacity: 0.7 }]}
+              onPress={() => handleCaptureLocation(true)}
               disabled={capturingLocation}
               activeOpacity={0.85}
             >
               {capturingLocation ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <View style={styles.gpsBtnContent}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <Text style={styles.gpsBtnText}>DETECTING LIVE GPS LOCATION...</Text>
+                </View>
               ) : (
                 <View style={styles.gpsBtnContent}>
-                  <Ionicons name="locate" size={20} color="#FFFFFF" />
-                  <Text style={styles.gpsBtnText}>USE MY CURRENT LOCATION</Text>
+                  <Text style={{ fontSize: 16, marginRight: 6 }}>📍</Text>
+                  <Text style={styles.gpsBtnText}>USE LIVE GPS LOCATION</Text>
                 </View>
               )}
             </TouchableOpacity>
 
-            {locationCaptured && (
+            {locationCaptured ? (
               <View style={styles.coordBox}>
-                <Ionicons name="checkmark-circle" size={18} color="#10B981" />
+                <Text style={{ fontSize: 15, marginRight: 6 }}>🟢</Text>
                 <Text style={styles.coordText}>
-                  Location captured ✓ ({latitude}° N, {longitude}° E)
+                  Live location detected: {locality ? `${locality}, ${district}` : 'GPS coordinates locked'}
+                </Text>
+              </View>
+            ) : (
+              <View style={[styles.coordBox, { backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }]}>
+                <Text style={{ fontSize: 13, marginRight: 6 }}>⏳</Text>
+                <Text style={[styles.coordText, { color: '#92400E' }]}>
+                  Tap button above to fetch your current GPS position
                 </Text>
               </View>
             )}
@@ -597,7 +649,7 @@ export default function ReportCaseScreen() {
                 </View>
               ) : (
                 <View style={styles.submittingRow}>
-                  <Ionicons name="shield-checkmark" size={22} color="#FFFFFF" />
+                  <Text style={{ fontSize: 18, marginRight: 6 }}>🛡️</Text>
                   <Text style={styles.submitBtnText}>SUBMIT CASE FOR RISK EVALUATION</Text>
                 </View>
               )}

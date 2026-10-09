@@ -1,14 +1,16 @@
 /**
  * AQUASENSE - Alert Management Controller
+ * Role-restricted alert review and management
  */
 
 const Alert = require('../models/Alert');
 const { generateAlertId } = require('../utils/idGenerator');
 const { generateRecommendedAction } = require('../services/alertService');
+const { normalizeRole, ROLES } = require('../utils/roles');
 
-// @desc    Get all alerts with optional status/location filtering
+// @desc    Get all alerts with role-specific filtering
 // @route   GET /api/alerts
-// @access  Public
+// @access  Protected
 const getAlerts = async (req, res, next) => {
   try {
     const { status, riskLevel, location } = req.query;
@@ -18,7 +20,12 @@ const getAlerts = async (req, res, next) => {
     if (riskLevel) filter.riskLevel = riskLevel;
     if (location) filter.location = location;
 
-    const alerts = await Alert.find(filter);
+    let alerts = await Alert.find(filter);
+
+    // Health workers see permitted community notifications
+    if (req.user && normalizeRole(req.user.role) === ROLES.HEALTH_WORKER) {
+      alerts = alerts.filter(a => a.status === 'ACTIVE' || a.status === 'ACKNOWLEDGED' || a.status === 'REVIEWED');
+    }
 
     return res.status(200).json({
       success: true,
@@ -32,7 +39,7 @@ const getAlerts = async (req, res, next) => {
 
 // @desc    Create an alert manually
 // @route   POST /api/alerts
-// @access  Protected
+// @access  Protected (HEALTH_AUTHORITY only)
 const createAlert = async (req, res, next) => {
   try {
     const { location, riskLevel, caseCount, reason, recommendedAction, status } = req.body;
@@ -65,13 +72,13 @@ const createAlert = async (req, res, next) => {
   }
 };
 
-// @desc    Update alert status (e.g. ACTIVE -> ACKNOWLEDGED -> RESOLVED)
+// @desc    Update alert status (e.g. REVIEWED or RESOLVED)
 // @route   PUT /api/alerts/:id/status
-// @access  Protected
+// @access  Protected (HEALTH_AUTHORITY only)
 const updateAlertStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
-    const validStatuses = ['ACTIVE', 'ACKNOWLEDGED', 'RESOLVED'];
+    const validStatuses = ['ACTIVE', 'ACKNOWLEDGED', 'RESOLVED', 'REVIEWED', 'UNDER_INVESTIGATION'];
 
     if (!status || !validStatuses.includes(status.toUpperCase())) {
       return res.status(400).json({
@@ -106,7 +113,7 @@ const updateAlertStatus = async (req, res, next) => {
 
 // @desc    Delete an alert
 // @route   DELETE /api/alerts/:id
-// @access  Protected (ADMIN or AUTHORITY)
+// @access  Protected (HEALTH_AUTHORITY only)
 const deleteAlert = async (req, res, next) => {
   try {
     const alert = await Alert.findById(req.params.id);

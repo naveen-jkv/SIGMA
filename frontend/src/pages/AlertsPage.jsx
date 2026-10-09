@@ -14,9 +14,12 @@ import {
 } from 'lucide-react';
 import { getAlerts, updateAlertStatus, createAlert } from '../services/api';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../hooks/useAuth';
 
 const AlertsPage = () => {
   const { showToast } = useToast();
+  const { role } = useAuth();
+  const isAuthority = role === 'HEALTH_AUTHORITY';
 
   const [alerts, setAlerts] = useState([]);
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -113,6 +116,7 @@ const AlertsPage = () => {
       case 'ACTIVE':
         return 'bg-rose-50 text-rose-700 border-rose-200 font-bold';
       case 'ACKNOWLEDGED':
+      case 'REVIEWED':
         return 'bg-blue-50 text-blue-700 border-blue-200 font-semibold';
       case 'RESOLVED':
         return 'bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold';
@@ -127,22 +131,26 @@ const AlertsPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Outbreak Alert Center
+            {isAuthority ? 'Outbreak Alert Center' : 'Public Health Advisories & Notifications'}
           </h2>
           <p className="text-xs text-slate-500">
-            Automated notifications dispatched by AI risk scoring models, with clinical intervention tracking.
+            {isAuthority
+              ? 'Automated notifications dispatched by AI risk scoring models, with clinical intervention tracking.'
+              : 'Community health advisories and active outbreak early-warning notifications.'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 transition-all"
-          >
-            <PlusCircle className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Issue Manual Alert</span>
-          </button>
-        </div>
+        {isAuthority && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 transition-all"
+            >
+              <PlusCircle className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Issue Manual Alert</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Filter Tabs */}
@@ -240,41 +248,52 @@ const AlertsPage = () => {
                   </div>
                 </div>
 
-                {/* Bottom Action Buttons for Health Authorities */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3 flex-wrap">
-                  <span className="text-[11px] text-slate-400">
-                    Authority Protocol: Update response stage
-                  </span>
+                {/* Bottom Action Section: Protocol Actions for Authorities vs Advisory Note for Workers */}
+                {isAuthority ? (
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3 flex-wrap">
+                    <span className="text-[11px] text-slate-400">
+                      Authority Protocol: Update response stage
+                    </span>
 
-                  <div className="flex items-center gap-2">
-                    {alt.status === 'ACTIVE' && (
-                      <button
-                        onClick={() => handleUpdateStatus(alt._id || alt.alertId, 'ACKNOWLEDGED')}
-                        className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
-                      >
-                        <FileCheck className="w-3.5 h-3.5" />
-                        <span>Mark as Reviewed</span>
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {alt.status === 'ACTIVE' && (
+                        <button
+                          onClick={() => handleUpdateStatus(alt._id || alt.alertId, 'REVIEWED')}
+                          className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+                        >
+                          <FileCheck className="w-3.5 h-3.5" />
+                          <span>Mark as Reviewed</span>
+                        </button>
+                      )}
 
-                    {alt.status !== 'RESOLVED' && (
-                      <button
-                        onClick={() => handleUpdateStatus(alt._id || alt.alertId, 'RESOLVED')}
-                        className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Mark as Resolved</span>
-                      </button>
-                    )}
+                      {alt.status !== 'RESOLVED' && (
+                        <button
+                          onClick={() => handleUpdateStatus(alt._id || alt.alertId, 'RESOLVED')}
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Mark as Resolved</span>
+                        </button>
+                      )}
 
-                    {alt.status === 'RESOLVED' && (
-                      <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                        Outbreak Contained & Cleared
-                      </span>
-                    )}
+                      {alt.status === 'RESOLVED' && (
+                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          Outbreak Contained & Cleared
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      Public Health Advisory Alert
+                    </span>
+                    <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                      Surveillance Status: {alt.status}
+                    </span>
+                  </div>
+                )}
               </div>
             );
           })

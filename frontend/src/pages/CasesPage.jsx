@@ -15,9 +15,12 @@ import {
 } from 'lucide-react';
 import { getCases, updateCase } from '../services/api';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../hooks/useAuth';
 
 const CasesPage = () => {
   const { showToast } = useToast();
+  const { role } = useAuth();
+  const isWorker = role === 'HEALTH_WORKER';
 
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,10 +141,12 @@ const CasesPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Surveillance Case Registry
+            {isWorker ? 'My Case Reports' : 'Surveillance Case Registry'}
           </h2>
           <p className="text-xs text-slate-500">
-            Search, filter, and inspect clinical reports across all monitored water basins and districts.
+            {isWorker
+              ? 'View, monitor, and verify epidemiological cases you have submitted.'
+              : 'Search, filter, and inspect clinical reports across all monitored water basins and districts.'}
           </p>
         </div>
 
@@ -367,8 +372,8 @@ const CasesPage = () => {
                   <div className="font-semibold text-slate-800">{selectedCase.locality}</div>
                 </div>
                 <div>
-                  <span className="text-slate-400 text-[11px]">Coordinates:</span>
-                  <div className="font-mono text-slate-800">{selectedCase.latitude}, {selectedCase.longitude}</div>
+                  <span className="text-slate-400 text-[11px]">Geotag Status:</span>
+                  <div className="font-semibold text-emerald-600">✓ Automated Location Tag</div>
                 </div>
               </div>
 

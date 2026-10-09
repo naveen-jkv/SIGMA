@@ -1,11 +1,13 @@
 /**
- * JWT Authentication Middleware
+ * AQUASENSE - JWT Authentication Middleware
+ * Validates bearer token, retrieves user, and attaches normalized user identity.
  */
 
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { normalizeRole } = require('../utils/roles');
 
-const protect = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   let token;
 
   if (
@@ -23,11 +25,16 @@ const protect = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({
           success: false,
-          error: 'User account associated with this token not found'
+          error: 'Not authorized: User account associated with this token not found'
         });
       }
 
-      req.user = user;
+      // Convert mongoose doc to plain object if needed and normalize role
+      const userObj = user.toObject ? user.toObject() : { ...user };
+      userObj.role = normalizeRole(userObj.role);
+      userObj.id = userObj._id || userObj.id;
+
+      req.user = userObj;
       return next();
     } catch (err) {
       return res.status(401).json({
@@ -37,12 +44,15 @@ const protect = async (req, res, next) => {
     }
   }
 
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      error: 'Not authorized: No token provided in Authorization header'
-    });
-  }
+  return res.status(401).json({
+    success: false,
+    error: 'Not authorized: No token provided in Authorization header'
+  });
 };
 
-module.exports = { protect };
+const protect = authenticate;
+
+module.exports = {
+  authenticate,
+  protect
+};

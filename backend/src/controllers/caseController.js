@@ -1,22 +1,32 @@
 /**
  * AQUASENSE - Case Management Controller
+ * Supports role-based case submission, filtered listing, and ownership checks.
  */
 
 const Case = require('../models/Case');
 const { assessCaseRisk } = require('../services/riskService');
 const { triggerAutomaticAlert } = require('../services/alertService');
 const { generateCaseId } = require('../utils/idGenerator');
+const { normalizeRole, ROLES } = require('../utils/roles');
+const { isCaseOwner } = require('../middleware/ownership');
 const logger = require('../utils/logger');
 
 // @desc    Create a new case report & trigger automated outbreak analytics
 // @route   POST /api/cases
-// @access  Public or Protected
+// @access  Protected (HEALTH_WORKER)
 const createCase = async (req, res, next) => {
   try {
+    const userId = req.user ? String(req.user._id || req.user.id || '') : '';
+    const userEmail = req.user ? req.user.email : '';
+    const userName = req.user ? req.user.name : '';
+
     const caseData = {
       ...req.body,
       caseId: req.body.caseId || generateCaseId(),
-      createdBy: req.user ? req.user.name || req.user.email : req.body.createdBy || 'Health Worker'
+      createdBy: userEmail || userId || 'Health Worker',
+      createdById: userId,
+      createdByEmail: userEmail,
+      createdByName: userName
     };
 
     // 1. Calculate risk & run analytics based on locality context
@@ -32,7 +42,7 @@ const createCase = async (req, res, next) => {
     // 3. Trigger automatic alert if HIGH or CRITICAL
     const alertResult = await triggerAutomaticAlert(savedCase, riskAssessment);
 
-    logger.info(`New Case created: ${savedCase.caseId} in ${savedCase.locality} | Risk: ${savedCase.riskLevel} (${savedCase.riskScore})`);
+    logger.info(`New Case created: ${savedCase.caseId} in ${savedCase.locality} by ${savedCase.createdBy} | Risk: ${savedCase.riskLevel} (${savedCase.riskScore})`);
 
     // 4. Return risk information and alert status to frontend
     return res.status(201).json({
@@ -53,9 +63,9 @@ const createCase = async (req, res, next) => {
   }
 };
 
-// @desc    Get all cases with filtering and search
+// @desc    Get cases with role-specific filtering and search
 // @route   GET /api/cases
-// @access  Public
+// @access  Protected (Workers see their own; Authorities see authorized area records)
 const getCases = async (req, res, next) => {
   try {
     const { locality, district, riskLevel, status, suspectedDisease } = req.query;
@@ -67,7 +77,12 @@ const getCases = async (req, res, next) => {
     if (status) filter.status = status;
     if (suspectedDisease) filter.suspectedDisease = suspectedDisease;
 
-    const cases = await Case.find(filter);
+    let cases = await Case.find(filter);
+
+    // If requester is a Health Worker, restrict strictly to their own submitted records
+    if (req.user && normalizeRole(req.user.role) === ROLES.HEALTH_WORKER) {
+      cases = cases.filter(c => isCaseOwner(c, req.user));
+    }
 
     return res.status(200).json({
       success: true,
@@ -81,10 +96,10 @@ const getCases = async (req, res, next) => {
 
 // @desc    Get single case by ID or caseId
 // @route   GET /api/cases/:id
-// @access  Public
+// @access  Protected (Ownership or Authority enforced by middleware)
 const getCaseById = async (req, res, next) => {
   try {
-    const caseDoc = await Case.findById(req.params.id);
+    const caseDoc = req.case || await Case.findById(req.params.id);
     if (!caseDoc) {
       return res.status(404).json({
         success: false,
@@ -103,10 +118,10 @@ const getCaseById = async (req, res, next) => {
 
 // @desc    Update a case
 // @route   PUT /api/cases/:id
-// @access  Public or Protected
+// @access  Protected (Ownership or Authority enforced by middleware)
 const updateCase = async (req, res, next) => {
   try {
-    const existing = await Case.findById(req.params.id);
+    const existing = req.case || await Case.findById(req.params.id);
     if (!existing) {
       return res.status(404).json({
         success: false,
@@ -114,7 +129,14 @@ const updateCase = async (req, res, next) => {
       });
     }
 
-    const updated = await Case.findByIdAndUpdate(req.params.id, req.body, {
+    // Disallow overriding creator ownership fields
+    const updatePayload = { ...req.body };
+    delete updatePayload.createdBy;
+    delete updatePayload.createdById;
+    delete updatePayload.createdByEmail;
+    delete updatePayload.createdByName;
+
+    const updated = await Case.findByIdAndUpdate(req.params.id, updatePayload, {
       new: true,
       runValidators: true
     });
@@ -130,7 +152,7 @@ const updateCase = async (req, res, next) => {
 
 // @desc    Delete a case
 // @route   DELETE /api/cases/:id
-// @access  Public or Protected
+// @access  Protected (Ownership or Authority enforced by middleware)
 const deleteCase = async (req, res, next) => {
   try {
     const deleted = await Case.findByIdAndDelete(req.params.id);

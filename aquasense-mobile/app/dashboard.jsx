@@ -93,7 +93,7 @@ export default function DashboardScreen() {
           {/* Total Cases */}
           <View style={[styles.statCard, { borderLeftColor: COLORS.primary }]}>
             <View style={styles.statIconWrap}>
-              <Ionicons name="people" size={18} color={COLORS.primary} />
+              <Text style={{ fontSize: 16 }}>👥</Text>
             </View>
             <Text style={styles.statNumber}>{stats.totalCases}</Text>
             <Text style={styles.statLabel}>TOTAL CASES</Text>
@@ -102,7 +102,7 @@ export default function DashboardScreen() {
           {/* Cases Today */}
           <View style={[styles.statCard, { borderLeftColor: '#0EA5E9' }]}>
             <View style={[styles.statIconWrap, { backgroundColor: '#E0F2FE' }]}>
-              <Ionicons name="today" size={18} color="#0284C7" />
+              <Text style={{ fontSize: 16 }}>📅</Text>
             </View>
             <Text style={styles.statNumber}>{stats.casesToday}</Text>
             <Text style={styles.statLabel}>CASES TODAY</Text>
@@ -111,7 +111,7 @@ export default function DashboardScreen() {
           {/* High-Risk Areas */}
           <View style={[styles.statCard, { borderLeftColor: '#F97316' }]}>
             <View style={[styles.statIconWrap, { backgroundColor: '#FFEDD5' }]}>
-              <Ionicons name="flame" size={18} color="#EA580C" />
+              <Text style={{ fontSize: 16 }}>🔥</Text>
             </View>
             <Text style={styles.statNumber}>{stats.highRiskAreas}</Text>
             <Text style={styles.statLabel}>HIGH-RISK AREAS</Text>
@@ -120,7 +120,7 @@ export default function DashboardScreen() {
           {/* Active Alerts */}
           <View style={[styles.statCard, { borderLeftColor: '#EF4444' }]}>
             <View style={[styles.statIconWrap, { backgroundColor: '#FEE2E2' }]}>
-              <Ionicons name="warning" size={18} color="#DC2626" />
+              <Text style={{ fontSize: 16 }}>⚠️</Text>
             </View>
             <Text style={[styles.statNumber, { color: '#DC2626' }]}>{stats.activeAlerts}</Text>
             <Text style={styles.statLabel}>ACTIVE ALERTS</Text>
@@ -134,7 +134,7 @@ export default function DashboardScreen() {
           activeOpacity={0.88}
         >
           <View style={styles.reportBtnGlow}>
-            <Ionicons name="add-circle" size={26} color="#FFFFFF" />
+            <Text style={{ fontSize: 20, color: '#FFFFFF', marginRight: 6 }}>➕</Text>
             <Text style={styles.reportBtnText}>+ REPORT NEW CASE</Text>
           </View>
         </TouchableOpacity>
@@ -146,7 +146,7 @@ export default function DashboardScreen() {
             onPress={() => router.push('/cases')}
             activeOpacity={0.7}
           >
-            <Ionicons name="clipboard-outline" size={20} color={COLORS.navy} />
+            <Text style={{ fontSize: 18, marginBottom: 2 }}>📋</Text>
             <Text style={styles.navItemText}>My Cases</Text>
           </TouchableOpacity>
 
@@ -156,7 +156,7 @@ export default function DashboardScreen() {
             activeOpacity={0.7}
           >
             <View style={{ position: 'relative' }}>
-              <Ionicons name="notifications-outline" size={20} color={COLORS.navy} />
+              <Text style={{ fontSize: 18, marginBottom: 2 }}>🔔</Text>
               {stats.activeAlerts > 0 && <View style={styles.alertDot} />}
             </View>
             <Text style={styles.navItemText}>Alerts ({stats.activeAlerts})</Text>
@@ -167,7 +167,7 @@ export default function DashboardScreen() {
             onPress={() => router.push('/profile')}
             activeOpacity={0.7}
           >
-            <Ionicons name="person-circle-outline" size={20} color={COLORS.navy} />
+            <Text style={{ fontSize: 18, marginBottom: 2 }}>👤</Text>
             <Text style={styles.navItemText}>Profile</Text>
           </TouchableOpacity>
         </View>
@@ -187,7 +187,7 @@ export default function DashboardScreen() {
           </View>
         ) : recentCases.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Ionicons name="document-text-outline" size={36} color={COLORS.textMuted} />
+            <Text style={{ fontSize: 32, marginBottom: 8 }}>📋</Text>
             <Text style={styles.emptyTitle}>No Cases Recorded Yet</Text>
             <Text style={styles.emptySub}>Tap "+ REPORT NEW CASE" to register your first clinical observation.</Text>
           </View>

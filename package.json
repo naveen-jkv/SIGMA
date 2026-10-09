@@ -14,10 +14,13 @@
     "frontend": "npm --prefix frontend run dev",
     "mobile": "npm --prefix aquasense-mobile start",
     "dev:mobile": "npm --prefix aquasense-mobile start",
-    "build:apk": "npm --prefix aquasense-mobile run build:apk",
     "fullstack": "concurrently -k -p \"[{name}]\" -n \"BACKEND,PYTHON,FRONTEND\" -c \"cyan,magenta,green\" \"node backend/src/server.js\" \"python backend/analytics/main.py\" \"npm --prefix frontend run dev\"",
+    "all": "concurrently -k -p \"[{name}]\" -n \"BACKEND,PYTHON,FRONTEND,MOBILE\" -c \"cyan,magenta,green,yellow\" \"node backend/src/server.js\" \"python backend/analytics/main.py\" \"npm --prefix frontend run dev\" \"npm --prefix aquasense-mobile start\"",
+    "start:all": "start-all.bat",
     "seed": "node backend/seed/seedData.js",
-    "test": "node backend/test/api.test.js"
+    "test": "node backend/test/api.test.js",
+    "test:rbac": "node backend/test/rbac.test.js",
+    "test:all": "node backend/test/rbac.test.js && node backend/test/api.test.js"
   },
   "keywords": [
     "aquasense",

@@ -429,38 +429,9 @@ const ReportCasePage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Latitude Coordinates
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                name="latitude"
-                value={formData.latitude}
-                onChange={handleInputChange}
-                placeholder="12.9612"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Longitude Coordinates
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                name="longitude"
-                value={formData.longitude}
-                onChange={handleInputChange}
-                placeholder="77.5854"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:outline-none"
-              />
-            </div>
+          <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+            <span className="text-emerald-600 font-bold">✓ Automated Geospatial Tagging:</span>
+            <span>Coordinates are automatically mapped based on locality & ward</span>
           </div>
         </div>
 

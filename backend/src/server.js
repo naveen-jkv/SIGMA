@@ -68,16 +68,32 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 // Initialize Server & DB
-const startServer = async () => {
+const startServer = async (customPort) => {
   try {
     await connectDB();
 
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    const activePort = customPort || process.env.PORT || 5000;
+
+    const os = require('os');
+    const getLocalIp = () => {
+      const interfaces = os.networkInterfaces();
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            return iface.address;
+          }
+        }
+      }
+      return 'localhost';
+    };
+    const networkIp = getLocalIp();
+
+    const server = app.listen(activePort, '0.0.0.0', () => {
       logger.success(`========================================================`);
-      logger.success(`🚀 AQUASENSE Backend Server Running on port ${PORT} (0.0.0.0)`);
-      logger.success(`📡 Local:   http://localhost:${PORT}`);
-      logger.success(`🌐 Network: http://172.16.43.161:${PORT}`);
-      logger.success(`🩺 Health:  http://172.16.43.161:${PORT}/api/health`);
+      logger.success(`🚀 AQUASENSE Backend Server Running on port ${activePort} (0.0.0.0)`);
+      logger.success(`📡 Local:   http://localhost:${activePort}`);
+      logger.success(`🌐 Network: http://${networkIp}:${activePort}`);
+      logger.success(`🩺 Health:  http://${networkIp}:${activePort}/api/health`);
       logger.success(`========================================================`);
     });
 

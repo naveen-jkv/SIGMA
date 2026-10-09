@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplets, Shield, User, Lock, AlertCircle, ArrowRight, Activity, CheckCircle } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { Droplets, Shield, User, Lock, AlertCircle, ArrowRight, Activity } from 'lucide-react';
+import { useAuth, normalizeRole } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 
 const LoginPage = () => {
@@ -11,14 +11,22 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('AUTHORITY'); // 'HEALTH_WORKER' or 'AUTHORITY'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleRedirectByRole = (userRole) => {
+    const role = normalizeRole(userRole);
+    if (role === 'HEALTH_WORKER') {
+      navigate('/worker/dashboard');
+    } else {
+      navigate('/authority/dashboard');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Please provide your email address and password');
+      setError('Please provide your official email address and password');
       return;
     }
 
@@ -26,37 +34,34 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const res = await login({ email, password, role });
-      if (res?.success) {
-        showToast(`Welcome back, ${res.user?.name || 'Officer'}!`, 'success');
-        if (role === 'HEALTH_WORKER') {
-          navigate('/worker-dashboard');
-        } else {
-          navigate('/authority-dashboard');
-        }
+      const res = await login({ email, password });
+      if (res?.success && res?.user) {
+        showToast(`Welcome back, ${res.user.name || 'Officer'}!`, 'success');
+        handleRedirectByRole(res.user.role);
       } else {
         setError(res?.error || 'Invalid authentication credentials');
       }
     } catch (err) {
-      setError(err?.response?.data?.error || 'Authentication server unreachable. Try Demo Mode below.');
+      setError(err?.response?.data?.error || 'Invalid credentials or authentication server unreachable.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDemoLogin = async (demoRole) => {
+  const handleDemoLogin = async (demoType) => {
     setLoading(true);
     setError('');
     try {
-      const res = await demoLogin(demoRole);
-      showToast(`Logged in as demo ${demoRole === 'AUTHORITY' ? 'Health Authority' : 'Health Worker'}!`, 'success');
-      if (demoRole === 'HEALTH_WORKER') {
-        navigate('/worker-dashboard');
+      const res = await demoLogin(demoType);
+      if (res?.success && res?.user) {
+        const isWorker = normalizeRole(res.user.role) === 'HEALTH_WORKER';
+        showToast(`Logged in as demo ${isWorker ? 'Health Worker' : 'Health Authority'}!`, 'success');
+        handleRedirectByRole(res.user.role);
       } else {
-        navigate('/authority-dashboard');
+        setError(res?.error || 'Failed to initiate demo session');
       }
     } catch (err) {
-      setError('Failed to initiate demo session');
+      setError(err?.response?.data?.error || 'Failed to initiate demo session');
     } finally {
       setLoading(false);
     }
@@ -81,7 +86,7 @@ const LoginPage = () => {
           </p>
           <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-[11px] text-slate-300">
             <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>National Surveillance Portal</span>
+            <span>Secure Surveillance Portal</span>
           </div>
         </div>
 
@@ -95,39 +100,6 @@ const LoginPage = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Role Selection */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Surveillance Role
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setRole('HEALTH_WORKER')}
-                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all ${
-                    role === 'HEALTH_WORKER'
-                      ? 'bg-cyan-50 border-brand-500 text-brand-700 shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <User className="w-4 h-4" />
-                  Health Worker
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole('AUTHORITY')}
-                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all ${
-                    role === 'AUTHORITY'
-                      ? 'bg-cyan-50 border-brand-500 text-brand-700 shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <Shield className="w-4 h-4" />
-                  Health Authority
-                </button>
-              </div>
-            </div>
-
             {/* Email Field */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
@@ -135,10 +107,12 @@ const LoginPage = () => {
               </label>
               <div className="relative">
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={role === 'AUTHORITY' ? 'officer@aquasense.org' : 'worker@aquasense.org'}
+                  placeholder="name@aquasense.org or authority@demo.com"
+                  required
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
                 />
               </div>
@@ -147,14 +121,16 @@ const LoginPage = () => {
             {/* Password Field */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Secure Password
+                Password
               </label>
               <div className="relative">
                 <input
+                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
+                  required
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
                 />
               </div>
@@ -162,6 +138,7 @@ const LoginPage = () => {
 
             {/* Sign In Button */}
             <button
+              id="submit-login-btn"
               type="submit"
               disabled={loading}
               className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
@@ -177,24 +154,26 @@ const LoginPage = () => {
             </button>
           </form>
 
-          {/* Hackathon Quick Demo Access Section */}
+          {/* Quick Demo Accounts Access Section */}
           <div className="mt-6 pt-5 border-t border-slate-100">
             <div className="text-center mb-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 bg-white px-2">
-                ⚡ Instant Hackathon Demo Access
+                Evaluator & Demo Accounts
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <button
+                id="demo-authority-btn"
                 type="button"
-                onClick={() => handleDemoLogin('AUTHORITY')}
+                onClick={() => handleDemoLogin('HEALTH_AUTHORITY')}
                 className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
               >
                 <Shield className="w-3.5 h-3.5 text-cyan-400" />
                 <span>Authority Demo</span>
               </button>
               <button
+                id="demo-worker-btn"
                 type="button"
                 onClick={() => handleDemoLogin('HEALTH_WORKER')}
                 className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
@@ -204,14 +183,14 @@ const LoginPage = () => {
               </button>
             </div>
             <p className="text-[11px] text-slate-400 text-center mt-2.5 leading-tight">
-              One-click entry for judges with pre-loaded epidemiological telemetry.
+              Pre-configured accounts: <code className="text-slate-600">authority@demo.com</code> & <code className="text-slate-600">healthworker@demo.com</code>
             </p>
           </div>
         </div>
 
         {/* Medical Non-diagnostic Disclaimer Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-500 font-medium">
-          AQUASENSE is a public health early-warning support tool. It does not provide medical diagnoses.
+          AQUASENSE is an epidemiological surveillance support tool. It does not provide medical diagnoses.
         </div>
       </div>
     </div>

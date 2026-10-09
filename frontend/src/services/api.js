@@ -17,14 +17,19 @@ import {
 } from './mockData';
 
 const resolveBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+  const envUrl = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  // 1. Explicit production or custom URL (e.g., https://api.aquasense.app/api)
+  if (envUrl && !envUrl.includes('YOUR_COMPUTER_IP')) {
     return envUrl;
   }
-  if (typeof window !== 'undefined' && window.location && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return `http://${window.location.hostname}:5000/api`;
+  // 2. Browser runtime detection: works on localhost and mobile device on same LAN
+  if (typeof window !== 'undefined' && window.location) {
+    const host = window.location.hostname;
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      return `http://${host}:5000/api`;
+    }
   }
-  return envUrl || 'http://localhost:5000/api';
+  return 'http://localhost:5000/api';
 };
 
 const BASE_URL = resolveBaseUrl();
@@ -48,6 +53,20 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response interceptor: handle 401 Unauthorized for expired/invalid tokens
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      if (error.config && !error.config.url.includes('/auth/login')) {
+        localStorage.removeItem('aquasense_token');
+        localStorage.removeItem('aquasense_user');
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 
 // In-memory mutable state for mock fallback mode
@@ -80,58 +99,34 @@ export const checkHealth = async () => {
 // --- Authentication APIs ---
 
 export const login = async (credentials) => {
-  // If in demo mode or backend fails
-  if (!getForcedDemoMode()) {
-    try {
-      const res = await apiClient.post('/auth/login', credentials);
-      if (res.data?.token) {
-        localStorage.setItem('aquasense_token', res.data.token);
-        localStorage.setItem('aquasense_user', JSON.stringify(res.data.user));
-      }
-      return res.data;
-    } catch (err) {
-      console.warn('Backend login unavailable or invalid, checking mock credentials...', err.message);
-    }
+  const res = await apiClient.post('/auth/login', {
+    email: credentials.email,
+    password: credentials.password
+  });
+  if (res.data?.token) {
+    localStorage.setItem('aquasense_token', res.data.token);
+    localStorage.setItem('aquasense_user', JSON.stringify(res.data.user));
   }
-
-  // Fallback / Demo Login simulation
-  const role = credentials.role || (credentials.email?.includes('officer') || credentials.email?.includes('admin') ? 'AUTHORITY' : 'HEALTH_WORKER');
-  const mockUser = {
-    id: `usr_${Date.now()}`,
-    name: credentials.email ? credentials.email.split('@')[0].toUpperCase() : (role === 'AUTHORITY' ? 'Officer Rajesh' : 'Worker Priya'),
-    email: credentials.email || (role === 'AUTHORITY' ? 'officer@aquasense.org' : 'worker@aquasense.org'),
-    role: role,
-    createdAt: new Date().toISOString()
-  };
-  const mockToken = `mock_jwt_token_${Date.now()}`;
-  localStorage.setItem('aquasense_token', mockToken);
-  localStorage.setItem('aquasense_user', JSON.stringify(mockUser));
-  return { success: true, token: mockToken, user: mockUser, isMock: true };
+  return res.data;
 };
 
 export const register = async (userData) => {
-  try {
-    const res = await apiClient.post('/auth/register', userData);
-    return res.data;
-  } catch (err) {
-    if (getForcedDemoMode()) {
-      return { success: true, message: 'User registered in demo session' };
-    }
-    throw err;
+  const res = await apiClient.post('/auth/register', userData);
+  if (res.data?.token) {
+    localStorage.setItem('aquasense_token', res.data.token);
+    localStorage.setItem('aquasense_user', JSON.stringify(res.data.user));
   }
+  return res.data;
 };
 
 export const getMe = async () => {
-  if (!getForcedDemoMode()) {
-    try {
-      const res = await apiClient.get('/auth/me');
-      return res.data;
-    } catch (err) {
-      console.warn('Backend /auth/me failed, using local storage user');
-    }
+  const token = localStorage.getItem('aquasense_token');
+  if (!token) return { success: false, user: null };
+  const res = await apiClient.get('/auth/me');
+  if (res.data?.user) {
+    localStorage.setItem('aquasense_user', JSON.stringify(res.data.user));
   }
-  const stored = localStorage.getItem('aquasense_user');
-  return { success: true, user: stored ? JSON.parse(stored) : null };
+  return res.data;
 };
 
 // --- Case Management APIs ---

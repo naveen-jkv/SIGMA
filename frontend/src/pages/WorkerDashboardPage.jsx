@@ -31,32 +31,31 @@ const WorkerDashboardPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [statsData, casesData, alertsData] = await Promise.all([
-          getDashboardStats(),
+        const [casesData, alertsData] = await Promise.all([
           getCases(),
           getAlerts({ status: 'ACTIVE' })
         ]);
 
-        if (statsData) {
-          const highRiskCount = Array.isArray(casesData)
-            ? casesData.filter(c => c.riskLevel === 'HIGH' || c.riskLevel === 'CRITICAL').length
-            : 0;
+        const casesList = Array.isArray(casesData) ? casesData : [];
+        const alertsList = Array.isArray(alertsData) ? alertsData : [];
 
-          setStats({
-            totalCases: statsData.totalCases || (Array.isArray(casesData) ? casesData.length : 0),
-            casesToday: statsData.casesToday || 4,
-            highRiskCases: highRiskCount,
-            activeAlerts: statsData.activeAlerts || (Array.isArray(alertsData) ? alertsData.length : 0)
-          });
-        }
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayCount = casesList.filter(c => {
+          const d = new Date(c.reportedDate || c.createdAt);
+          return d >= startOfToday;
+        }).length;
+        const highRiskCount = casesList.filter(c => c.riskLevel === 'HIGH' || c.riskLevel === 'CRITICAL').length;
 
-        if (Array.isArray(casesData)) {
-          setRecentCases(casesData.slice(0, 6));
-        }
+        setStats({
+          totalCases: casesList.length,
+          casesToday: todayCount,
+          highRiskCases: highRiskCount,
+          activeAlerts: alertsList.length
+        });
 
-        if (Array.isArray(alertsData)) {
-          setAlerts(alertsData.slice(0, 3));
-        }
+        setRecentCases(casesList.slice(0, 6));
+        setAlerts(alertsList.slice(0, 3));
       } catch (err) {
         console.error('Failed to load worker dashboard telemetry', err);
       } finally {

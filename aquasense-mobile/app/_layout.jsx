@@ -2,8 +2,24 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { AuthProvider } from '../src/context/AuthContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  "Codegen didn't run for RNCSafeAreaProvider",
+  "Codegen didn't run for RNCSafeAreaView"
+]);
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
@@ -27,3 +43,4 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+

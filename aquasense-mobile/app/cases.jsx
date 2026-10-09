@@ -53,10 +53,17 @@ export default function CasesScreen() {
     setSyncing(true);
     try {
       const res = await syncPendingCases();
-      Alert.alert(
-        'Surveillance Sync',
-        `Successfully synchronized ${res.synced} case(s) with authority backend.${res.failed > 0 ? ` ${res.failed} pending retry.` : ''}`
-      );
+      if (res.synced > 0) {
+        Alert.alert(
+          'Surveillance Sync',
+          `Successfully synchronized ${res.synced} case(s) with authority backend!${res.failed > 0 ? ` (${res.failed} pending retry)` : ''}`
+        );
+      } else if (res.failed > 0) {
+        Alert.alert(
+          'Sync Failed',
+          res.error ? `Server could not process case: ${res.error}` : 'Backend unreachable. Verify Wi-Fi network and server status.'
+        );
+      }
       fetchCases();
     } catch (err) {
       Alert.alert('Sync Incomplete', err.message || 'Backend unreachable. Verify Wi-Fi network.');
@@ -100,7 +107,7 @@ export default function CasesScreen() {
       <View style={styles.topBar}>
         {/* Search Input */}
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={18} color={COLORS.textMuted} style={styles.searchIcon} />
+          <Text style={{ fontSize: 15, marginRight: 6 }}>🔍</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Search by locality, ID, or disease..."
@@ -110,7 +117,7 @@ export default function CasesScreen() {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')} style={{ padding: 4 }}>
-              <Ionicons name="close-circle" size={16} color={COLORS.textMuted} />
+              <Text style={{ fontSize: 13, color: COLORS.textMuted, fontWeight: '700' }}>✕</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -146,7 +153,7 @@ export default function CasesScreen() {
           <View style={styles.syncCard}>
             <View style={styles.syncCardLeft}>
               <View style={styles.syncIconWrap}>
-                <Ionicons name="cloud-offline" size={20} color="#D97706" />
+                <Text style={{ fontSize: 18 }}>☁️</Text>
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.syncTitle}>
@@ -185,7 +192,7 @@ export default function CasesScreen() {
           </View>
         ) : filteredCases.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Ionicons name="search-outline" size={36} color={COLORS.textMuted} />
+            <Text style={{ fontSize: 32, marginBottom: 8 }}>🔍</Text>
             <Text style={styles.emptyTitle}>No Matching Cases</Text>
             <Text style={styles.emptySub}>
               No surveillance reports match your current filter or search criteria.

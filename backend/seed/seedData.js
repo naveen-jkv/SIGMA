@@ -16,16 +16,28 @@ const { generateCaseId, generateAlertId } = require('../src/utils/idGenerator');
 
 const DEMO_USERS = [
   {
+    name: 'Primary Health Worker',
+    email: 'healthworker@demo.com',
+    password: 'password123',
+    role: 'HEALTH_WORKER'
+  },
+  {
+    name: 'District Health Authority',
+    email: 'authority@demo.com',
+    password: 'password123',
+    role: 'HEALTH_AUTHORITY'
+  },
+  {
     name: 'Dr. Aisha Sharma',
     email: 'admin@aquasense.org',
     password: 'password123',
-    role: 'ADMIN'
+    role: 'HEALTH_AUTHORITY'
   },
   {
     name: 'Public Health Officer Rajesh',
     email: 'officer@aquasense.org',
     password: 'password123',
-    role: 'AUTHORITY'
+    role: 'HEALTH_AUTHORITY'
   },
   {
     name: 'Community Health Worker Priya',

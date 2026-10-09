@@ -16,11 +16,11 @@ export default function Header({ title = 'AQUASENSE', subtitle = 'Health Worker 
         <View style={styles.leftGroup}>
           {showBack && (
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+              <Text style={styles.backSymbol}>‹</Text>
             </TouchableOpacity>
           )}
           <View style={styles.logoMark}>
-            <Ionicons name="water" size={18} color="#38BDF8" />
+            <Text style={{ fontSize: 15 }}>💧</Text>
           </View>
           <View>
             <View style={styles.brandRow}>
@@ -75,6 +75,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     paddingRight: 4,
+  },
+  backSymbol: {
+    color: '#FFFFFF',
+    fontSize: 26,
+    fontWeight: '700',
+    lineHeight: 28,
   },
   logoMark: {
     width: 36,

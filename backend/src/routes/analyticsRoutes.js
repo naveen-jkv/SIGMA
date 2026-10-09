@@ -8,6 +8,11 @@ const {
   getHotspots,
   getAnomalies
 } = require('../controllers/analyticsController');
+const { authenticate } = require('../middleware/auth');
+const { authorizeRoles } = require('../middleware/roleCheck');
+
+// All analytics routes require authentication and HEALTH_AUTHORITY role
+router.use(authenticate, authorizeRoles('HEALTH_AUTHORITY'));
 
 router.get('/trends', getTrends);
 router.get('/symptoms', getSymptoms);

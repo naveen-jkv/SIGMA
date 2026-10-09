@@ -42,8 +42,25 @@ const alertSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['ACTIVE', 'ACKNOWLEDGED', 'RESOLVED'],
+      enum: ['ACTIVE', 'ACKNOWLEDGED', 'UNDER_INVESTIGATION', 'RESOLVED'],
       default: 'ACTIVE'
+    },
+    acknowledgedAt: {
+      type: Date
+    },
+    investigationStartedAt: {
+      type: Date
+    },
+    resolvedAt: {
+      type: Date
+    },
+    resolutionReason: {
+      type: String,
+      trim: true
+    },
+    statusNotes: {
+      type: String,
+      trim: true
     },
     createdAt: {
       type: Date,

@@ -108,6 +108,18 @@ const caseSchema = new mongoose.Schema(
       type: String,
       default: 'system'
     },
+    createdById: {
+      type: String,
+      default: ''
+    },
+    createdByEmail: {
+      type: String,
+      default: ''
+    },
+    createdByName: {
+      type: String,
+      default: ''
+    },
     notes: {
       type: String,
       default: '',
@@ -162,6 +174,9 @@ class CaseProxy {
       riskLevel: data.riskLevel || 'LOW',
       status: data.status || 'REPORTED',
       createdBy: data.createdBy || 'system',
+      createdById: data.createdById || '',
+      createdByEmail: data.createdByEmail || '',
+      createdByName: data.createdByName || '',
       notes: data.notes || '',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -192,6 +207,16 @@ class CaseProxy {
     }
     if (filter.suspectedDisease) {
       results = results.filter(c => c.suspectedDisease.toLowerCase().includes(filter.suspectedDisease.toLowerCase()));
+    }
+    if (filter.createdBy) {
+      const target = String(filter.createdBy).toLowerCase();
+      results = results.filter(c => {
+        const cb = String(c.createdBy || '').toLowerCase();
+        const cbId = String(c.createdById || '').toLowerCase();
+        const cbEmail = String(c.createdByEmail || '').toLowerCase();
+        const cbName = String(c.createdByName || '').toLowerCase();
+        return cb === target || cbId === target || cbEmail === target || cbName === target;
+      });
     }
 
     // Sort descending by reportedDate
